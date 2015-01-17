@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+    
+    xsi:schemaLocation="  
+        http://www.springframework.org/schema/context  
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+        http://www.springframework.org/schema/rabbit   
+        http://www.springframework.org/schema/rabbit/spring-rabbit-1.2.xsd  
+        http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">  
+
+	<!-- RabbitMQ Connection Config  --> 
+    <rabbit:connection-factory id="connectionFactory" host="192.8.125.202" username="guest" password="guest" 
+    port="5672" virtual-host="/" />
+    <rabbit:admin connection-factory="connectionFactory"/>
+    
+    <!-- RabbitMQ Listener Config  --> 
+    <!-- <rabbit:queue name="MqListenerQueue" durable="true" exclusive="false" auto-delete="false"/>
+    <rabbit:direct-exchange name="NettyMqServerListenerExchange" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="MqListenerQueue" key="mqListener"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+    <bean id="messageListener" class="com.nettymq.server.MqListener">
+    </bean>
+    <rabbit:listener-container connection-factory="connectionFactory">
+        <rabbit:listener queues="MqListenerQueue" ref="messageListener" method="onMessage" />
+    </rabbit:listener-container> -->
+    
+    <!-- RabbitMQ Sender Config  --> 
+    <rabbit:template id="messageSender" connection-factory="connectionFactory"/>
+    <rabbit:queue name="fanoutMsgQueue" durable="true" exclusive="false" auto-delete="false"/>
+    <rabbit:fanout-exchange name="NettyMqServerSenderExchange" durable="true" auto-delete="false">
+    	<!-- The receiver queue bind to the exchange  --> 
+        <!-- <rabbit:bindings>
+            <rabbit:binding queue="fanoutMsgQueue"/>
+        </rabbit:bindings> -->
+    </rabbit:fanout-exchange>
+    
+</beans>
+
