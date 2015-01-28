@@ -37,18 +37,21 @@ public class MqReceiver {
 				try {
 					Connection connection = connnectionFactory.newConnection();
 					Channel channel = connection.createChannel();
-					channel.exchangeDeclare(exchangeName, "direct", true, false, null);
+					channel.exchangeDeclare(exchangeName, "direct", true,
+							false, null);
 					channel.queueDeclare(queueName, true, false, false, null);
 					channel.queueBind(queueName, exchangeName, routeKey);
 
 					// process the message one by one
 					channel.basicQos(1);
 
-					QueueingConsumer queueingConsumer = new QueueingConsumer(channel);
+					QueueingConsumer queueingConsumer = new QueueingConsumer(
+							channel);
 					// auto-ack is false
 					channel.basicConsume(queueName, false, queueingConsumer);
 					while (true) {
-						QueueingConsumer.Delivery delivery = queueingConsumer.nextDelivery();
+						QueueingConsumer.Delivery delivery = queueingConsumer
+								.nextDelivery();
 						String message = new String(delivery.getBody());
 
 						log.debug("Mq Receiver get message");
@@ -56,16 +59,21 @@ public class MqReceiver {
 						// If you want to send to a specified client, just add
 						// your own logic and ack manually
 						// Be aware that ChannelGroup is thread safe
-						log.info(String.format("Conneted client number: %d", EchoServerHandler.channels.size()));
+						log.info(String.format("Conneted client number: %d",
+								EchoServerHandler.channels.size()));
 						for (io.netty.channel.Channel c : EchoServerHandler.channels) {
-							ByteBuf msg = Unpooled.copiedBuffer(message.getBytes());
+							ByteBuf msg = Unpooled.copiedBuffer(message
+									.getBytes());
 							c.writeAndFlush(msg);
 						}
 						// manually ack to MQ server the message is consumed.
-						channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+						channel.basicAck(delivery.getEnvelope()
+								.getDeliveryTag(), false);
 					}
 				} catch (Exception ex) {
-					log.error(String.format("Create Rabbit MQ listener error %s",ex.getMessage()));
+					log.error(String.format(
+							"Create Rabbit MQ listener error %s",
+							ex.getMessage()));
 				}
 			}
 		};

@@ -22,5 +22,4 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter{
 			}
 		}
 	}
-
 }

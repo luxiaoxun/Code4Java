@@ -2,14 +2,17 @@ package com.nettymq.server;
 
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.CharsetUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import com.nettymq.message.Message;
+
 
 /**
  * Handler implementation for the echo server.
@@ -30,15 +33,18 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		ByteBuf in = (ByteBuf) msg;
-		String data = in.toString(io.netty.util.CharsetUtil.UTF_8);
+		//ByteBuf in = (ByteBuf) msg;
+		//String data = in.toString(io.netty.util.CharsetUtil.UTF_8);
+		Message message = (Message)(msg);
 
 		// Receive message from client
-		// Send message to rabbit MQ who want to subscribe
-		mqSender.send(data);
+		// Send message to rabbit MQ who wants to subscribe
+		String dataString = new String(message.getData(),CharsetUtil.UTF_8);
+		mqSender.send(dataString);
 
 		// Echo server: send back the msg to client
-		ctx.writeAndFlush(msg);
+		log.debug(String.format("Receive message: %s", dataString));
+		ctx.writeAndFlush(Unpooled.copiedBuffer(message.getData()));
 	}
 
 	@Override
