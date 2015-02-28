@@ -42,14 +42,9 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 		String dataString = new String(message.getData(),CharsetUtil.UTF_8);
 		mqSender.send(dataString);
 
-		// Echo server: send back the msg to client
+		// Echo server: send back the msg to client (just for test)
 		log.debug(String.format("Receive message: %s", dataString));
 		ctx.writeAndFlush(Unpooled.copiedBuffer(message.getData()));
-	}
-
-	@Override
-	public void channelReadComplete(ChannelHandlerContext ctx) {
-		ctx.flush();
 	}
 
 	@Override
@@ -60,7 +55,8 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 	
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("Disconnected client "+ctx.channel().remoteAddress());
+		//System.out.println("Disconnected client "+ctx.channel().remoteAddress());
+		log.debug("Disconnected client "+ctx.channel().remoteAddress());
 	}
 
 	@Override

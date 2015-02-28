@@ -20,9 +20,9 @@ public class NettyMqServerChannelInitializer extends ChannelInitializer<SocketCh
 	@Override
 	public void initChannel(SocketChannel ch) throws Exception {
 		//Reader ilde time 3 minutes  
-		ch.pipeline().addLast(new IdleStateHandler(3*60,0,0));
+		ch.pipeline().addLast(new IdleStateHandler(3*60, 0, 0));
 		ch.pipeline().addLast(new HeartBeatHandler());
-		ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65535, 0, 4,-4,0));
+		ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(65536, 0, 4,-4, 0));
 		ch.pipeline().addLast(new ToMessageDecoder());
 		ch.pipeline().addLast(new EchoServerHandler(mqSender));
 	}

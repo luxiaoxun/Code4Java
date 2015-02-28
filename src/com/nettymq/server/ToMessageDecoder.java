@@ -36,7 +36,7 @@ public class ToMessageDecoder extends ByteToMessageDecoder {
 				message.setHeader(header);
 				message.setData(data);
 
-				arg2.add(message);
+				arg2.add(message); // Decode one message successfully
 			}
 		}
 	}
