@@ -20,20 +20,28 @@ public class TcpClient {
 	private final static String serverString = "127.0.0.1";
 	private final static int servPort = 18866;
 
-	public static void main(String[] args) throws UnknownHostException,
-			IOException {
+	public static void main(String[] args){
 
-		// Create socket that is connected to server on specified port
-		Socket socket = new Socket(serverString, servPort);
-		System.out
-				.println("Connected to server...send echo string (quit to end)");
+		Socket socket=null;
+		try{
+			// Create socket that is connected to server on specified port
+			socket = new Socket(serverString, servPort);
+			System.out.println("Connected to server...send echo string (quit to end)");
 
-		final InputStream in = socket.getInputStream();
-		OutputStream out = socket.getOutputStream();
-
-		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(
-				System.in));
-
+			final InputStream in = socket.getInputStream();
+			OutputStream out = socket.getOutputStream();
+			
+			startReceiveThread(in);
+			
+			//sendMsgToServerFromInput(out);
+			sendMsgToServerFromThread(out);
+		}
+		catch(IOException ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	private static void startReceiveThread(final InputStream in){
 		Thread receiveThread = new Thread() {
 			public void run() {
 				while (true) {
@@ -55,22 +63,37 @@ public class TcpClient {
 
 		receiveThread.setDaemon(true);
 		receiveThread.start();
-
+	}
+	
+	private static void sendMsgToServerFromInput(OutputStream out){
+		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
-			String msg = inFromUser.readLine();
+			String msg=new String();
+			try {
+				msg = inFromUser.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			if (msg.equals("quit")) {
 				break;
 			}
 			byte[] msgBytes = getMessageBytes(msg);
 			if(msgBytes!=null){
-				out.write(msgBytes);
+				try {
+					out.write(msgBytes);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
-		socket.close(); // Close the socket and its streams
 	}
-
-	private static byte[] getMessageBytes(String msg) {
+	
+	private static void sendMsgToServerFromThread(final OutputStream out){
+		ClientMsgSender msgSender = new ClientMsgSender(out);
+		msgSender.start();
+	}
+	
+	public static byte[] getMessageBytes(String msg) {
 		msg = msg.trim();
 		if (!msg.isEmpty()) {
 			byte[] data = msg.getBytes();

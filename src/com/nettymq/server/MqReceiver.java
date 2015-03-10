@@ -4,8 +4,11 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.group.ChannelGroupFuture;
+import io.netty.channel.group.ChannelGroupFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +39,7 @@ public class MqReceiver {
 			public void run() {
 				try {
 					Connection connection = connnectionFactory.newConnection();
-					Channel channel = connection.createChannel();
+					final Channel channel = connection.createChannel();
 					channel.exchangeDeclare(exchangeName, "direct", true,
 							false, null);
 					channel.queueDeclare(queueName, true, false, false, null);
@@ -50,25 +53,32 @@ public class MqReceiver {
 					// auto-ack is false
 					channel.basicConsume(queueName, false, queueingConsumer);
 					while (true) {
-						QueueingConsumer.Delivery delivery = queueingConsumer
+						final QueueingConsumer.Delivery delivery = queueingConsumer
 								.nextDelivery();
 						String message = new String(delivery.getBody());
 
 						log.debug("Mq Receiver get message");
-						// Send the message to all connected clients
+						// Broudcast message to all connected clients
 						// If you want to send to a specified client, just add
 						// your own logic and ack manually
 						// Be aware that ChannelGroup is thread safe
-						log.info(String.format("Conneted client number: %d",
-								EchoServerHandler.channels.size()));
-						for (io.netty.channel.Channel c : EchoServerHandler.channels) {
-							ByteBuf msg = Unpooled.copiedBuffer(message
-									.getBytes());
-							c.writeAndFlush(msg);
+						if(EchoServerHandler.channels!=null){
+							log.info(String.format("Conneted client number: %d",
+									EchoServerHandler.channels.size()));
+							ByteBuf msg = Unpooled.copiedBuffer(message.getBytes());
+
+//							for (io.netty.channel.Channel c : EchoServerHandler.channels) {
+//								c.writeAndFlush(msg);
+//							}
+							EchoServerHandler.channels.writeAndFlush(msg).addListener(new ChannelGroupFutureListener() {
+								@Override
+								public void operationComplete(ChannelGroupFuture arg0) throws Exception {
+									// manually ack to MQ server the
+									// message is consumed.
+									channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+								}
+							});
 						}
-						// manually ack to MQ server the message is consumed.
-						channel.basicAck(delivery.getEnvelope()
-								.getDeliveryTag(), false);
 					}
 				} catch (Exception ex) {
 					log.error(String.format(

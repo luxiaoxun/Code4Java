@@ -3,7 +3,9 @@ package com.nettymq.server;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -33,18 +35,23 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		//ByteBuf in = (ByteBuf) msg;
-		//String data = in.toString(io.netty.util.CharsetUtil.UTF_8);
-		Message message = (Message)(msg);
+		try{
+			//ByteBuf in = (ByteBuf) msg;
+			//String data = in.toString(io.netty.util.CharsetUtil.UTF_8);
+			Message message = (Message)(msg);
 
-		// Receive message from client
-		// Send message to rabbit MQ who wants to subscribe
-		String dataString = new String(message.getData(),CharsetUtil.UTF_8);
-		mqSender.send(dataString);
+			// Receive message from client
+			// Send message to rabbit MQ who wants to subscribe
+			String dataString = new String(message.getData(),CharsetUtil.UTF_8);
+			mqSender.send(dataString);
 
-		// Echo server: send back the msg to client (just for test)
-		log.debug(String.format("Receive message: %s", dataString));
-		ctx.writeAndFlush(Unpooled.copiedBuffer(message.getData()));
+			// Echo server: send back the msg to client (just for test)
+			log.debug(String.format("Receive message: %s", dataString));
+			ctx.writeAndFlush(Unpooled.copiedBuffer(message.getData()));
+		}
+		finally{
+			ReferenceCountUtil.release(msg);
+		}
 	}
 
 	@Override
