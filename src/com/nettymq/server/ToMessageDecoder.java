@@ -14,37 +14,36 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 
 public class ToMessageDecoder extends ByteToMessageDecoder {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(ToMessageDecoder.class);
-
 	@Override
-	protected void decode(ChannelHandlerContext arg0, ByteBuf arg1,
-			List<Object> arg2) throws Exception {
+	protected void decode(ChannelHandlerContext ctx, ByteBuf in,
+			List<Object> out) throws Exception {
 
 		// At least 5 bytes to decode
-		if (arg1.readableBytes() >= 5) {
-			int msgLength = arg1.readInt();
-			byte msgType = arg1.readByte();
-			if (msgLength >= 5) {
-				ByteBuf bf = arg1.readBytes(msgLength - 5);
-				byte[] data = bf.array();
-				Header header = new Header();
-				header.setMsgLength(msgLength);
-				header.setMsgType(msgType);
-
-				Message message = new Message();
-				message.setHeader(header);
-				message.setData(data);
-
-				arg2.add(message); // Decode one message successfully
-			}
+		if (in.readableBytes() < 5) {
+			return;
 		}
-	}
+		
+		in.markReaderIndex();
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-			throws Exception {
-		ctx.close();
-		log.error(cause.getMessage());
+		int msgLength = in.readInt();
+		if (in.readableBytes() < msgLength) {
+	        in.resetReaderIndex();
+	        return;
+	     }
+
+		byte msgType = in.readByte();
+		if (msgLength >= 5) {
+			ByteBuf bf = in.readBytes(msgLength - 5);
+			byte[] data = bf.array();
+			Header header = new Header();
+			header.setMsgLength(msgLength);
+			header.setMsgType(msgType);
+
+			Message message = new Message();
+			message.setHeader(header);
+			message.setData(data);
+
+			out.add(message); // Decode one message successfully
+		}
 	}
 }
