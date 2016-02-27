@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.nettymq.message.Message;
 
-
 /**
  * Handler implementation for the echo server.
  */
@@ -34,21 +33,20 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		try{
-			//ByteBuf in = (ByteBuf) msg;
-			//String data = in.toString(io.netty.util.CharsetUtil.UTF_8);
-			Message message = (Message)(msg);
+		try {
+			// ByteBuf in = (ByteBuf) msg;
+			// String data = in.toString(io.netty.util.CharsetUtil.UTF_8);
+			Message message = (Message) (msg);
 
 			// Receive message from client
 			// Send message to rabbit MQ who wants to subscribe
-			String dataString = new String(message.getData(),CharsetUtil.UTF_8);
+			String dataString = new String(message.getData(), CharsetUtil.UTF_8);
 			mqSender.send(dataString);
 
 			// Echo server: send back the msg to client (just for test)
 			log.debug(String.format("Receive message: %s", dataString));
 			ctx.writeAndFlush(Unpooled.copiedBuffer(message.getData()));
-		}
-		finally{
+		} finally {
 			ReferenceCountUtil.release(msg);
 		}
 	}
@@ -58,11 +56,11 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 		// A closed channel will be removed from ChannelGroup automatically
 		channels.add(ctx.channel());
 	}
-	
+
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		//System.out.println("Disconnected client "+ctx.channel().remoteAddress());
-		log.debug("Disconnected client "+ctx.channel().remoteAddress());
+		// System.out.println("Disconnected client "+ctx.channel().remoteAddress());
+		log.debug("Disconnected client " + ctx.channel().remoteAddress());
 	}
 
 	@Override

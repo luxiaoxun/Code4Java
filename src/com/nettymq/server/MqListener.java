@@ -11,23 +11,23 @@ import org.springframework.amqp.core.MessageListener;
 /**
  * RabbitMQ Listener based on Spring AMQP
  */
-public class MqListener implements MessageListener{
+public class MqListener implements MessageListener {
 
-    private static final Logger log = LoggerFactory.getLogger(MqListener.class);
+	private static final Logger log = LoggerFactory.getLogger(MqListener.class);
 
-    public MqListener(){
-    	
-    }
+	public MqListener() {
 
-    @Override
-    public void onMessage(Message message){
-    	log.debug("Get message from rabbitMQ");
-        //do some thing with the message
-    	if(message!=null){
-            for(Channel c:EchoServerHandler.channels){
-                ByteBuf msg = Unpooled.copiedBuffer(message.getBody());
-                c.writeAndFlush(msg);
-            }
-    	}
-    }
+	}
+
+	@Override
+	public void onMessage(Message message) {
+		log.debug("Get message from rabbitMQ");
+		// do some thing with the message
+		if (message != null) {
+			for (Channel c : EchoServerHandler.channels) {
+				ByteBuf msg = Unpooled.copiedBuffer(message.getBody());
+				c.writeAndFlush(msg);
+			}
+		}
+	}
 }

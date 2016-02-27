@@ -22,14 +22,13 @@ public class ToMessageDecoder extends ByteToMessageDecoder {
 		if (in.readableBytes() < 5) {
 			return;
 		}
-		
-		in.markReaderIndex();
 
+		in.markReaderIndex();
 		int msgLength = in.readInt();
 		if (in.readableBytes() < msgLength) {
-	        in.resetReaderIndex();
-	        return;
-	     }
+			in.resetReaderIndex();
+			return;
+		}
 
 		byte msgType = in.readByte();
 		if (msgLength >= 5) {

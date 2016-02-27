@@ -62,22 +62,33 @@ public class MqReceiver {
 						// If you want to send to a specified client, just add
 						// your own logic and ack manually
 						// Be aware that ChannelGroup is thread safe
-						if(EchoServerHandler.channels!=null){
-							log.info(String.format("Conneted client number: %d",
+						if (EchoServerHandler.channels != null) {
+							log.info(String.format(
+									"Conneted client number: %d",
 									EchoServerHandler.channels.size()));
-							ByteBuf msg = Unpooled.copiedBuffer(message.getBytes());
+							ByteBuf msg = Unpooled.copiedBuffer(message
+									.getBytes());
 
-//							for (io.netty.channel.Channel c : EchoServerHandler.channels) {
-//								c.writeAndFlush(msg);
-//							}
-							EchoServerHandler.channels.writeAndFlush(msg).addListener(new ChannelGroupFutureListener() {
-								@Override
-								public void operationComplete(ChannelGroupFuture arg0) throws Exception {
-									// manually ack to MQ server the
-									// message is consumed.
-									channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-								}
-							});
+							// for (io.netty.channel.Channel c :
+							// EchoServerHandler.channels) {
+							// c.writeAndFlush(msg);
+							// }
+							EchoServerHandler.channels.writeAndFlush(msg)
+									.addListener(
+											new ChannelGroupFutureListener() {
+												@Override
+												public void operationComplete(
+														ChannelGroupFuture arg0)
+														throws Exception {
+													// manually ack to MQ server
+													// the
+													// message is consumed.
+													channel.basicAck(delivery
+															.getEnvelope()
+															.getDeliveryTag(),
+															false);
+												}
+											});
 						}
 					}
 				} catch (Exception ex) {
