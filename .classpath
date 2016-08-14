@@ -1,23 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="lib/aopalliance-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/guava-18.0.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="lib/mchange-commons-java-0.2.8.jar"/>
-	<classpathentry kind="lib" path="lib/netty-all-4.0.23.Final.jar"/>
-	<classpathentry kind="lib" path="lib/rabbitmq-client.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/spring-amqp-1.2.0.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-aop-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-beans-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-context-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-core-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-expression-3.2.2.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-rabbit-1.2.0.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/spring-tx-3.2.4.RELEASE.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
