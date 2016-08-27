@@ -83,7 +83,6 @@ public class MqReceiver {
 			ByteBuf msg = Unpooled.copiedBuffer(message.getBytes());
 			EchoServerHandler.channels.writeAndFlush(msg).addListener(
 					new ChannelGroupFutureListener() {
-						@Override
 						public void operationComplete(ChannelGroupFuture arg0)
 								throws Exception {
 							// manually ack to MQ server

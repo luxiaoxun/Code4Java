@@ -23,7 +23,6 @@ public class ClientMsgSender {
 
 	public void start() {
 		scheduler.scheduleWithFixedDelay(new Runnable() {
-			@Override
 			public void run() {
 				String msg = new String("Test Msg");
 				byte[] msgBytes = TcpClient.getMessageBytes(msg);

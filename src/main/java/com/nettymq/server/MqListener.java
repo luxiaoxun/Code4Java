@@ -19,7 +19,6 @@ public class MqListener implements MessageListener {
 
 	}
 
-	@Override
 	public void onMessage(Message message) {
 		log.debug("Get message from rabbitMQ");
 		// do some thing with the message
