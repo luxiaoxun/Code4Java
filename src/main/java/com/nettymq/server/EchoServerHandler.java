@@ -41,7 +41,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 			// Receive message from client
 			// Send message to rabbit MQ who wants to subscribe
 			String dataString = new String(message.getData(), CharsetUtil.UTF_8);
-			//mqSender.send(dataString);
+			mqSender.send(dataString);
 
 			// Echo server: send back the msg to client (just for test)
 			log.debug(String.format("Receive message: %s", dataString));
