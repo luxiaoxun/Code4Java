@@ -98,7 +98,8 @@ public class SolrIndexService {
 	public List<PoiData> getQueryResult(SolrQuery query) {
 		List<PoiData> results = new ArrayList<>();
 		try {
-			QueryResponse response = solrClient.query(query);
+			QueryResponse response = null;
+			response = solrClient.query(query);
 			SolrDocumentList list = response.getResults();
 			for (SolrDocument solrDocument : list) {
 				PoiData data = new PoiData();
@@ -107,7 +108,9 @@ public class SolrIndexService {
 				data.setLat((double) solrDocument.getFieldValue(LatFieldName));
 				data.setLng((double) solrDocument.getFieldValue(LngFieldName));
 			}
-		}catch (SolrServerException e) {
+		} catch (IOException e) {
+			log.error(e.toString());
+		} catch (SolrServerException e) {
 			log.error(e.toString());
 		}
 		return results;
