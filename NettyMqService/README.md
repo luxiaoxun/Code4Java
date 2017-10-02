@@ -1,4 +1,4 @@
-# NettyMqServer
+# NettyMqService
 A simple project demonstrates how to use Netty with RabbitMQ.  
 中文详情：[Chinese Details](http://www.cnblogs.com/luxiaoxun/p/4257105.html)
 ### Design:
