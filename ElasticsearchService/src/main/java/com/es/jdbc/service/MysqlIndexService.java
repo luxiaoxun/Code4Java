@@ -6,6 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -82,6 +86,12 @@ public class MysqlIndexService {
         }
 
         return mapBuilder;
+    }
+
+    //https://stackoverflow.com/questions/27427613/elasticsearch-java-api-putmapping-from-json-file-error
+    public static XContentBuilder builderFromJson(String json) throws JsonParseException, JsonMappingException, IOException{
+        Map<String, Object> map = new ObjectMapper().readValue(json, new TypeReference<Map<String, Object>>(){});
+        return XContentFactory.jsonBuilder().map(map);
     }
 
     // 得到索引字符串
