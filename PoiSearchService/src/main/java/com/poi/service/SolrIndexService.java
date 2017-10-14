@@ -58,7 +58,7 @@ public class SolrIndexService {
 	}
 	
 	public List<PoiData> getDataInCircle(double lng, double lat, double radius){
-		List<PoiData> results = new ArrayList<>();
+		List<PoiData> results = new ArrayList<>();;
 		SolrQuery params = new SolrQuery();   
         params.set("q", "*:*");    
         params.set("fq", "{!geofilt}");        //距离过滤函数 
