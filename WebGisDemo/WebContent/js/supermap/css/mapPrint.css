@@ -1,0 +1,245 @@
+html{
+    -ms-touch-action:none;
+    -ms-content-zooming: none;
+    /* overflow:hidden; */
+}
+.print-header{
+    margin: auto;
+    width: 936px;
+    height: 522px;
+    top: 50px;
+    position: relative;
+}
+.superD{
+    height: 24px;
+    line-height: 24px;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+.superD h3{
+    float: left;
+    font-size: 14px;
+}
+.superD span{
+    float: right;
+    margin-right: 4px;
+}
+#superft{
+    content: '.';
+    height: 77px;
+    display: block;
+    overflow: hidden;
+    clear: both;
+	padding-top:25px;
+}
+.printClose{
+    margin-bottom: 20px;
+    float: right;    
+}
+.printClose span{
+    background-position: 0px 0px;
+    cursor: pointer;
+    margin-right: 0px;
+    margin-top: 5px;
+    display: inline-block;
+    width: 69px;
+    height: 29px;
+    background-image: url(../img/print.png);
+}
+.row-fluid{
+    border-bottom: 1px solid #e1e1e8;
+}
+#mapContainer{
+ margin: auto;
+    width: 936px;
+    height: 522px;
+    position: relative;
+}
+div.smMap {
+    z-index: 0;
+    padding: 0px!important;
+    margin: 0px!important;
+    border:1px solid #3473b7;
+}
+
+div.smMapViewport {
+    text-align: left;
+}
+
+div.smLayerDiv {
+    -moz-user-select: none;
+}
+
+.smControlScale {
+    right: 3px;
+    bottom: 3em;
+    display: block;
+    position: absolute;
+    font-size: smaller;
+}
+.smControlScaleLine {
+    display: block;
+    position: absolute;
+    left: 10px;
+    bottom: 15px;
+    font-size: xx-small;
+}
+.smControlScaleLineBottom {
+    border: solid 2px black;
+    border-bottom: none;
+    margin-top:-2px;
+    text-align: center;
+}
+.smControlScaleLineTop {
+    border: solid 2px black;
+    border-top: none;
+    text-align: center;
+}
+
+
+/**
+ * Layer switcher
+ */
+.smControlLayerSwitcher {
+    position: absolute;
+    top: 25px;
+    right: 0px;
+    width: 20em;
+    font-family: sans-serif;
+    font-weight: bold;
+    margin-top: 3px;
+    margin-left: 3px;
+    margin-bottom: 3px;
+    font-size: smaller;
+    color: white;
+    background-color: transparent;
+    cursor: default;
+}
+
+.smControlLayerSwitcher .layersDiv {
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    background-color: darkblue;
+    width: 100%;
+    height: 100%;
+}
+/*白色样式下*/
+.smControlLayerSwitcher .layersDivWhite {
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-bottom: 5px;
+    background-color: darkblue;
+    width: 100%;
+    height: 100%;
+}
+
+.smControlLayerSwitcher .layersDiv .baseLbl,
+.smControlLayerSwitcher .layersDiv .dataLbl {
+    margin-top: 3px;
+    margin-left: 3px;
+    margin-bottom: 3px;
+}
+
+.smControlLayerSwitcher .layersDiv .baseLayersDiv,
+.smControlLayerSwitcher .layersDiv .dataLayersDiv {
+    padding-left: 3px;
+}
+
+.smControlLayerSwitcher .maximizeDiv,
+.smControlLayerSwitcher .minimizeDiv {
+    top: 0px;
+    right: 0px;
+    text-align: left;
+    cursor: pointer;
+}
+.smControlLayerSwitcher .maximizeDiv{
+    border: 3px solid #a5c8ec;
+}
+
+.smControlLayerSwitcher .maximizeDivWhite{
+    top: 0px;
+    right: 0px;
+    cursor: pointer;
+}
+
+div.smControlLayerSwitcher {
+    position: absolute;
+    top: 50px;
+    right: 0px;
+    width: 171px;
+    font-family: sans-serif;
+    font-weight: bold;
+    margin: 0px 3px 3px;
+    font-size: smaller;
+    font-size: 13px;
+    color: #4083c2;
+    background-color: transparent;
+    border: 3px solid #a5c8ec;
+}
+div.smControlLayerSwitcher div.layersDiv {
+    padding-top: 25px;
+    padding-left: 5px;
+    padding-bottom: 5px;
+    background-color: #FFFFFF;
+    width: 166px;
+    height: 100%;
+}
+div.smControlLayerSwitcher div.layersDivWhite {
+    padding-top: 10px;
+    padding-left: 5px;
+    padding-bottom: 10px;
+    background-color: #FFFFFF;
+    width: 166px;
+    height: 100%;
+    color: #565656;
+    box-shadow:0px 0px 3px #ababab;
+    border:1px solid #d7d7d7;
+    border-radius:4px;
+}
+
+.layerSwitcherHR{
+    width: 95%;
+}
+
+input.inputElem {
+    width: 14px;
+    height:14px;
+    margin-left: 3px;
+    margin-right:4px;
+    margin-bottom: 4px;
+    margin-top: 4px;
+    vertical-align: middle;
+    border: 0px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0%,0%;
+    cursor: pointer;
+}
+span.labelSpan {
+    margin-left: 5px;
+    padding-bottom: 3px;
+    padding-top: 3px;
+    height:20px;
+    vertical-align: middle;
+}
+div.minimizeDiv .layerSwitcherContent{
+    position: absolute;
+    padding: 2px 40px;
+}
+
+
+/**
+ * Animations
+ */
+
+.smLayerDiv .smTileImage {
+    -webkit-transition: opacity 0.2s linear;
+    -moz-transition: opacity 0.2s linear;
+    -o-transition: opacity 0.2s linear;
+    transition: opacity 0.2s linear;
+}
+
+#popwin img{
+    max-width: none;
+}

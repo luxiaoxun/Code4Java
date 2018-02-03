@@ -1,0 +1,73 @@
+﻿body{
+    /*position: absolute;*/
+    /*height: 100%;*/
+    /*width: 100%;*/
+    margin: 0px;
+    background: #f1f1f1;
+    padding: 0px;
+    overflow: hidden;
+}
+
+#logo {
+    height: 56px;
+    /*width: 311px;*/
+    /*background: url(../img/banner-logo.png);*/
+    margin: 2px 0px 0px 10px;
+    line-height: 56px;
+    position: absolute;
+}
+
+#logoImg{
+    height: 56px;
+    margin-right:5px;
+}
+#logoTitle{
+    vertical-align: top;
+}
+#canvas{
+    /*border:1px solid #333;*/
+    position: absolute;
+    top: 60px;
+    left: 20px;
+}
+#mapContainer{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border: 0px solid;
+}
+#toolbar{
+    position: absolute;
+    height: 36px;
+    top:0px;
+    left: 70px;
+    /*border: 1px solid #333;*/
+    display: inline-block;
+}
+.icon16_16 {
+    width: 16px;
+    height: 16px;
+    vertical-align: top;
+    display: inline-block;
+    margin: 0px 5px 0px 5px;
+}
+.bv-textarea {
+    height: 40px;
+    font-size: 2em;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 10px;
+    border: 1px solid #74A1AF;
+    color: #000000;
+    background-color: #ffffff;
+}
+.ui-menu {
+    width: 100px;
+}
+.print-header{
+    margin: auto;
+    width: 936px;
+    height: 522px;
+    top: 50px;
+    position: relative;
+}

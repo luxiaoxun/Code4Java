@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- mybatis别名定义 -->
+    <typeAliases> 
+        <typeAlias alias="BaseStation" type="com.map.model.BaseStation"/> 
+    </typeAliases> 
+
+    <environments default="baseStation">
+        <environment id="baseStation">
+        <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+            <property name="driver" value="com.mysql.jdbc.Driver"/>
+            <property name="url" value="jdbc:mysql://127.0.0.1:3306/gmapcache" />
+            <property name="username" value="root"/>
+            <property name="password" value="luxx"/>
+            </dataSource>
+        </environment>
+    </environments>
+    
+    <!-- mybatis的mapper文件，每个xml配置文件对应一个接口 -->
+    <mappers>
+        <mapper resource="com/map/mapper/BaseStation.xml"/>
+    </mappers>
+</configuration>
