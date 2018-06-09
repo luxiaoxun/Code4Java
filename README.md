@@ -1,12 +1,12 @@
 # Code4Java
 Repository for my java projects 
 
-## NettyMqService
+## 1. NettyMqService
 How to implement a message queue service with Netty and RabbitMQ.
 #### 中文详情(Chinese Details):
 * [Message Queue Service based on Netty and RabbitMQ](http://www.cnblogs.com/luxiaoxun/p/4257105.html)
 
-## IndexSearchService
+## 2. IndexSearchService
 1. How to use Elasticsearch.
 2. How to use Solr or Lucene to index and query data.
 #### 中文详情(Chinese Details):
@@ -16,10 +16,10 @@ How to implement a message queue service with Netty and RabbitMQ.
 * [Elasticsearch index and query data](http://www.cnblogs.com/luxiaoxun/p/4869509.html)
 * [SQL to Elasticsearch Java Code](http://www.cnblogs.com/luxiaoxun/p/6826211.html)
 
-## MapHttpService
+## 3. MapHttpService
 A simple Http Map Service providing tile image. 
 
-## WebGISDemo
+## 4. WebGISDemo
 A simple web GIS page based on [leaflet](https://github.com/Leaflet/Leaflet).
 #### 中文详情([Chinese Details](http://www.cnblogs.com/luxiaoxun/p/5022333.html))
 How to use WebGISDemo with MapHttpService:
@@ -28,4 +28,3 @@ How to use WebGISDemo with MapHttpService:
    >database.dbType=0  # Use SQLite  
    >database.Sqlite.SqliteDbPath=D:\\GIS\\MapDownloader\\MapDownloader\\bin\\Release\\MapCache\\TileDBv5\\en\\Data.gmdb  
 2. Publish the page "map.html" to chrome to play.
-
