@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.es.jdbc</groupId>
+    <groupId>com.luxx</groupId>
     <artifactId>ElasticsearchService</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -16,9 +16,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lucene.version>5.3.1</lucene.version>
-        <es.version>5.2.1</es.version>
-        <jackson.version>2.8.6</jackson.version>
+        <lucene.version>7.1.0</lucene.version>
+        <es.version>6.2.4</es.version>
+        <jackson.version>2.9.6</jackson.version>
         <log4j2.version>2.7</log4j2.version>
     </properties>
 
