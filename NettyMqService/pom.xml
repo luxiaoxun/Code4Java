@@ -61,17 +61,17 @@
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
 			<artifactId>amqp-client</artifactId>
-			<version>3.5.1</version>
+			<version>4.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit</artifactId>
-			<version>1.7.5.RELEASE</version>
+			<version>1.7.10.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-amqp</artifactId>
-			<version>1.7.5.RELEASE</version>
+			<version>1.7.10.RELEASE</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/aopalliance/aopalliance -->
 		<dependency>
