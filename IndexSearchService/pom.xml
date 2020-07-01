@@ -19,7 +19,7 @@
         <lucene.version>7.1.0</lucene.version>
         <es.version>6.2.4</es.version>
         <jackson.version>2.10.1</jackson.version>
-        <log4j2.version>2.7</log4j2.version>
+        <log4j2.version>2.13.3</log4j2.version>
     </properties>
 
     <dependencies>
