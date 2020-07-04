@@ -7,7 +7,7 @@ import java.util.TimeZone;
 
 /**
  * Date Format Helper
- * 
+ *
  * @author luxiaoxun
  * @version 1.0
  * @since 2015.05.18

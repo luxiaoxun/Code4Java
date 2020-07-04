@@ -14,89 +14,89 @@ import org.slf4j.LoggerFactory;
  * Netty RabbitMQ Server
  */
 public class NettyMqServer {
-	private static final Logger log = LoggerFactory
-			.getLogger(NettyMqServer.class);
+    private static final Logger log = LoggerFactory
+            .getLogger(NettyMqServer.class);
 
-	private EventLoopGroup bossGroup;
-	private EventLoopGroup workerGroup;
-	private Channel serverChannel;
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
+    private Channel serverChannel;
 
-	private MqSender mqSender;
+    private MqSender mqSender;
 
-	public NettyMqServer() {
-		bossGroup = new NioEventLoopGroup();
-		workerGroup = new NioEventLoopGroup();
-		mqSender = new MqSender();
-	}
+    public NettyMqServer() {
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
+        mqSender = new MqSender();
+    }
 
-	private void start(int port) {
-		try {
-			// start server
-			ServerBootstrap b = new ServerBootstrap();
-			b.group(bossGroup, workerGroup)
-					.channel(NioServerSocketChannel.class)
-					.childHandler(new NettyMqServerChannelInitializer(mqSender));
-			b.option(ChannelOption.SO_BACKLOG, 128);
-			b.childOption(ChannelOption.SO_KEEPALIVE, false);
-			b.childOption(ChannelOption.TCP_NODELAY, true);
-			b.childOption(ChannelOption.SO_REUSEADDR, true);
-			ChannelFuture f = b.bind(port).sync();
-			serverChannel = f.channel();
+    private void start(int port) {
+        try {
+            // start server
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(bossGroup, workerGroup)
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new NettyMqServerChannelInitializer(mqSender));
+            b.option(ChannelOption.SO_BACKLOG, 128);
+            b.childOption(ChannelOption.SO_KEEPALIVE, false);
+            b.childOption(ChannelOption.TCP_NODELAY, true);
+            b.childOption(ChannelOption.SO_REUSEADDR, true);
+            ChannelFuture f = b.bind(port).sync();
+            serverChannel = f.channel();
 
-			// start mq listener
-			startMqListener();
+            // start mq listener
+            startMqListener();
 
-			log.info("Server start OK!");
-		} catch (Exception ex) {
-			log.error("Server start error: " + ex.getMessage());
-			stop();
-		}
-	}
+            log.info("Server start OK!");
+        } catch (Exception ex) {
+            log.error("Server start error: " + ex.getMessage());
+            stop();
+        }
+    }
 
-	private void startMqListener() {
-		// Not familiar with Spring AMQP, don't know how to Manually ack to the
-		// MQ server if one message is consumed.
-		// Problem: If ack-mode is Automatic, The message will be lost if you
-		// want some control
-		/*
-		 * @SuppressWarnings("resource") ApplicationContext applicationContext =
-		 * new FileSystemXmlApplicationContext( "classpath:rmqConfig.xml");
-		 * MqListener mqListener = (MqListener)
-		 * applicationContext.getBean("messageListener");
-		 */
+    private void startMqListener() {
+        // Not familiar with Spring AMQP, don't know how to Manually ack to the
+        // MQ server if one message is consumed.
+        // Problem: If ack-mode is Automatic, The message will be lost if you
+        // want some control
+        /*
+         * @SuppressWarnings("resource") ApplicationContext applicationContext =
+         * new FileSystemXmlApplicationContext( "classpath:rmqConfig.xml");
+         * MqListener mqListener = (MqListener)
+         * applicationContext.getBean("messageListener");
+         */
 
-		// Another way to start a MQ listener, just use the rabbit mq java
-		// client API
-		// Manually ack to MQ server if one message is consumed.
-		MqReceiver mqReceiver = new MqReceiver();
-		mqReceiver.start();
-	}
+        // Another way to start a MQ listener, just use the rabbit mq java
+        // client API
+        // Manually ack to MQ server if one message is consumed.
+        MqReceiver mqReceiver = new MqReceiver();
+        mqReceiver.start();
+    }
 
-	private void stop() {
-		if (serverChannel != null) {
-			serverChannel.close();
-		}
-		if (workerGroup != null) {
-			workerGroup.shutdownGracefully();
-		}
-		if (bossGroup != null) {
-			bossGroup.shutdownGracefully();
-		}
+    private void stop() {
+        if (serverChannel != null) {
+            serverChannel.close();
+        }
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully();
+        }
+        if (bossGroup != null) {
+            bossGroup.shutdownGracefully();
+        }
 
-		log.info("Server is shut down");
-	}
+        log.info("Server is shut down");
+    }
 
-	public void doStart() {
-		int port = 18866;
-		try {
-			start(port);
-		} catch (Exception e) {
-			log.error("Server start error: " + e.getMessage());
-		}
-	}
+    public void doStart() {
+        int port = 18866;
+        try {
+            start(port);
+        } catch (Exception e) {
+            log.error("Server start error: " + e.getMessage());
+        }
+    }
 
-	public void doStop() {
-		stop();
-	}
+    public void doStop() {
+        stop();
+    }
 
 }

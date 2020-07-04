@@ -114,7 +114,7 @@ public class ElasticSearchClient {
     // Create Index
     public void createIndex(String index) {
         IndicesExistsResponse indicesExistsResponse = client.admin().indices()
-                .exists(new IndicesExistsRequest(new String[] { index })).actionGet();
+                .exists(new IndicesExistsRequest(new String[]{index})).actionGet();
         if (!indicesExistsResponse.isExists()) {
             client.admin().indices().create(new CreateIndexRequest(index)).actionGet();
         }
@@ -123,7 +123,7 @@ public class ElasticSearchClient {
     // Delete Index
     public void deleteIndex(String index) {
         IndicesExistsResponse indicesExistsResponse = client.admin().indices()
-                .exists(new IndicesExistsRequest(new String[] { index })).actionGet();
+                .exists(new IndicesExistsRequest(new String[]{index})).actionGet();
         if (indicesExistsResponse.isExists()) {
             client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
         }
@@ -210,7 +210,7 @@ public class ElasticSearchClient {
 
     // Get results of aggregation
     public Map<String, String> getAggSearchResult(String index, QueryBuilder queryBuilder,
-            AggregationBuilder aggregationBuilder, String aggName) {
+                                                  AggregationBuilder aggregationBuilder, String aggName) {
         Map<String, String> resultsMap = new HashMap<>();
         SearchResponse searchResponse = client.prepareSearch(index).setQuery(queryBuilder)
                 .addAggregation(aggregationBuilder).execute().actionGet();
@@ -225,7 +225,7 @@ public class ElasticSearchClient {
     }
 
     public Map<String, String> getSumAggSearchOrderResult(String index, QueryBuilder queryBuilder,
-            AggregationBuilder aggregationBuilder, String aggName, String subAggName) {
+                                                          AggregationBuilder aggregationBuilder, String aggName, String subAggName) {
         Map<String, String> resultsMap = new HashMap<>();
         SearchResponse searchResponse = client.prepareSearch(index).setQuery(queryBuilder)
                 .addAggregation(aggregationBuilder).execute().actionGet();
@@ -247,7 +247,7 @@ public class ElasticSearchClient {
     }
 
     public Map<String, String> getMaxAggSearchOrderResult(String index, QueryBuilder queryBuilder,
-            AggregationBuilder aggregationBuilder, String aggName, String subAggName) {
+                                                          AggregationBuilder aggregationBuilder, String aggName, String subAggName) {
         Map<String, String> resultsMap = new HashMap<>();
         SearchResponse searchResponse = client.prepareSearch(index).setQuery(queryBuilder)
                 .addAggregation(aggregationBuilder).execute().actionGet();

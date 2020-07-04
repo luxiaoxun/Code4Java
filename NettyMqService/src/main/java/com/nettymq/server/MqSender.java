@@ -9,18 +9,18 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
  */
 public class MqSender {
 
-	private RabbitTemplate rabbitTemplate;
+    private RabbitTemplate rabbitTemplate;
 
-	public MqSender() {
-		@SuppressWarnings("resource")
-		ApplicationContext applicationContext = new FileSystemXmlApplicationContext(
-				"classpath:rmqConfig.xml");
+    public MqSender() {
+        @SuppressWarnings("resource")
+        ApplicationContext applicationContext = new FileSystemXmlApplicationContext(
+                "classpath:rmqConfig.xml");
 
-		rabbitTemplate = (RabbitTemplate) applicationContext
-				.getBean("messageSender");
-	}
+        rabbitTemplate = (RabbitTemplate) applicationContext
+                .getBean("messageSender");
+    }
 
-	public void send(String data) {
-		rabbitTemplate.convertAndSend("NettyMqServerSenderExchange", "", data);
-	}
+    public void send(String data) {
+        rabbitTemplate.convertAndSend("NettyMqServerSenderExchange", "", data);
+    }
 }

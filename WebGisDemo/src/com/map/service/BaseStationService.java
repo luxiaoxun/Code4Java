@@ -14,7 +14,7 @@ public class BaseStationService implements IBaseStationOperation {
 
     private BaseStationDb baseStaionDb = new BaseStationDb();
 
-    public List<BaseStation> getAllBaseStation(){
+    public List<BaseStation> getAllBaseStation() {
         return baseStaionDb.getAllBaseStations();
     }
 }

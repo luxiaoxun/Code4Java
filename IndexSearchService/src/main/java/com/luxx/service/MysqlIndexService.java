@@ -89,8 +89,9 @@ public class MysqlIndexService {
     }
 
     //https://stackoverflow.com/questions/27427613/elasticsearch-java-api-putmapping-from-json-file-error
-    public static XContentBuilder builderFromJson(String json) throws JsonParseException, JsonMappingException, IOException{
-        Map<String, Object> map = new ObjectMapper().readValue(json, new TypeReference<Map<String, Object>>(){});
+    public static XContentBuilder builderFromJson(String json) throws JsonParseException, JsonMappingException, IOException {
+        Map<String, Object> map = new ObjectMapper().readValue(json, new TypeReference<Map<String, Object>>() {
+        });
         return XContentFactory.jsonBuilder().map(map);
     }
 
@@ -169,7 +170,7 @@ public class MysqlIndexService {
 
     // Get count histogram based on date from startTime to endTime
     public Map<String, String> getDeviceDateFacetDistributeInfo(String startTime, String endTime,
-            List<String> deviceList, final String gap) {
+                                                                List<String> deviceList, final String gap) {
 
         Map<String, String> resultsMap = new HashMap<>();
         QueryBuilder deviceQueryBuilder = getDeviceQueryBuilder(deviceList);
@@ -179,22 +180,22 @@ public class MysqlIndexService {
         DateHistogramAggregationBuilder aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
                 .dateHistogramInterval(DateHistogramInterval.YEAR);
         switch (gap) {
-        case "Quarter":
-            aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
-                    .dateHistogramInterval(DateHistogramInterval.QUARTER);
-            break;
-        case "Month":
-            aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
-                    .dateHistogramInterval(DateHistogramInterval.MONTH);
-            break;
-        case "Week":
-            aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
-                    .dateHistogramInterval(DateHistogramInterval.WEEK);
-            break;
-        case "Day":
-            aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
-                    .dateHistogramInterval(DateHistogramInterval.DAY);
-            break;
+            case "Quarter":
+                aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+                        .dateHistogramInterval(DateHistogramInterval.QUARTER);
+                break;
+            case "Month":
+                aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+                        .dateHistogramInterval(DateHistogramInterval.MONTH);
+                break;
+            case "Week":
+                aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+                        .dateHistogramInterval(DateHistogramInterval.WEEK);
+                break;
+            case "Day":
+                aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+                        .dateHistogramInterval(DateHistogramInterval.DAY);
+                break;
         }
 
         resultsMap = client.getAggSearchResult(Index, queryBuilder, aggregation, "dateagg");
@@ -218,7 +219,7 @@ public class MysqlIndexService {
 
     // Get count aggregation based on OwnArea from startTime to endTime
     public Map<String, String> getOwnAreaDistributeInfo(String startTime, String endTime, List<String> deviceList,
-            String provinceName, String cityName) {
+                                                        String provinceName, String cityName) {
         Map<String, String> resultsMap = new HashMap<>();
 
         QueryBuilder deviceQueryBuilder = getDeviceQueryBuilder(deviceList);

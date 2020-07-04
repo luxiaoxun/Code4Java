@@ -9,23 +9,23 @@ import io.netty.handler.timeout.IdleStateHandler;
  * Netty ChannelInitializer
  */
 public class NettyMqServerChannelInitializer extends
-		ChannelInitializer<SocketChannel> {
+        ChannelInitializer<SocketChannel> {
 
-	// private EventBus eventBus;
-	private MqSender mqSender;
+    // private EventBus eventBus;
+    private MqSender mqSender;
 
-	public NettyMqServerChannelInitializer(MqSender mqSender) {
-		this.mqSender = mqSender;
-	}
+    public NettyMqServerChannelInitializer(MqSender mqSender) {
+        this.mqSender = mqSender;
+    }
 
-	@Override
-	public void initChannel(SocketChannel ch) throws Exception {
-		// Reader ilde time 3 minutes
-		ch.pipeline().addLast(new IdleStateHandler(3 * 60, 0, 0));
-		ch.pipeline().addLast(new HeartBeatHandler());
-		ch.pipeline().addLast(
-				new LengthFieldBasedFrameDecoder(65536, 0, 4, -4, 0));
-		ch.pipeline().addLast(new ToMessageDecoder());
-		ch.pipeline().addLast(new EchoServerHandler(mqSender));
-	}
+    @Override
+    public void initChannel(SocketChannel ch) throws Exception {
+        // Reader ilde time 3 minutes
+        ch.pipeline().addLast(new IdleStateHandler(3 * 60, 0, 0));
+        ch.pipeline().addLast(new HeartBeatHandler());
+        ch.pipeline().addLast(
+                new LengthFieldBasedFrameDecoder(65536, 0, 4, -4, 0));
+        ch.pipeline().addLast(new ToMessageDecoder());
+        ch.pipeline().addLast(new EchoServerHandler(mqSender));
+    }
 }

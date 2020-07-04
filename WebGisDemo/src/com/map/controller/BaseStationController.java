@@ -30,84 +30,86 @@ import javax.servlet.http.HttpSession;
 public class BaseStationController {
     private BaseStationService baseStationService = new BaseStationService();
     private PoiIndexService poiIndexService;
-    
-    public BaseStationController(){
-    	try {
-			poiIndexService = new PoiIndexService();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+    public BaseStationController() {
+        try {
+            poiIndexService = new PoiIndexService();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    
-    @RequestMapping(value="/map", method= {RequestMethod.GET,RequestMethod.POST})
-    public String map(Model model,HttpServletRequest request,HttpSession session) {
+
+    @RequestMapping(value = "/map", method = {RequestMethod.GET, RequestMethod.POST})
+    public String map(Model model, HttpServletRequest request, HttpSession session) {
         return "map";
     }
-    
-    @RequestMapping(value="/supermap", method= {RequestMethod.GET,RequestMethod.POST})
-    public String supermap(Model model,HttpServletRequest request,HttpSession session) {
+
+    @RequestMapping(value = "/supermap", method = {RequestMethod.GET, RequestMethod.POST})
+    public String supermap(Model model, HttpServletRequest request, HttpSession session) {
         return "supermap";
     }
 
-    @RequestMapping(value="/loadData", method= {RequestMethod.GET,RequestMethod.POST})
-    public @ResponseBody Message loadData(Model model,HttpServletRequest request,HttpSession session) {
+    @RequestMapping(value = "/loadData", method = {RequestMethod.GET, RequestMethod.POST})
+    public @ResponseBody
+    Message loadData(Model model, HttpServletRequest request, HttpSession session) {
         Message msg = new Message();
         List<BaseStation> datas = baseStationService.getAllBaseStation();
         msg.setMsg("ok");
         msg.setData(datas);
         return msg;
     }
-    
-    @RequestMapping(value="/getDataInCircle", method= {RequestMethod.GET,RequestMethod.POST})
-    public @ResponseBody Message getDataInCircle(Model model,HttpServletRequest request,HttpSession session) {
-        double radius =Double.parseDouble(request.getParameter("radius"));
+
+    @RequestMapping(value = "/getDataInCircle", method = {RequestMethod.GET, RequestMethod.POST})
+    public @ResponseBody
+    Message getDataInCircle(Model model, HttpServletRequest request, HttpSession session) {
+        double radius = Double.parseDouble(request.getParameter("radius"));
         double lat = Double.parseDouble(request.getParameter("lat"));
         double lng = Double.parseDouble(request.getParameter("lng"));
-        
-        List<PoiData> datas = poiIndexService.searchPoiInCircle(lng, lat, radius/1000);
+
+        List<PoiData> datas = poiIndexService.searchPoiInCircle(lng, lat, radius / 1000);
         Message msg = new Message();
         msg.setMsg("ok");
         msg.setData(datas);
 
         return msg;
     }
-    
-    @RequestMapping(value="/getDataInRectangle", method= {RequestMethod.GET,RequestMethod.POST})
-    public @ResponseBody Message getDataInRectange(Model model,HttpServletRequest request,
-    		HttpSession session) {
-    	String json = request.getParameter("latlngs");
+
+    @RequestMapping(value = "/getDataInRectangle", method = {RequestMethod.GET, RequestMethod.POST})
+    public @ResponseBody
+    Message getDataInRectange(Model model, HttpServletRequest request,
+                              HttpSession session) {
+        String json = request.getParameter("latlngs");
         List<PoiPoint> points = JsonHelper.jsonToObjectList(json, ArrayList.class, PoiPoint.class);
         Message msg = new Message();
-        if(points!=null && points.size()>=4){
-        	double minLat = points.get(0).getLat();
+        if (points != null && points.size() >= 4) {
+            double minLat = points.get(0).getLat();
             double maxLat = points.get(1).getLat();
             double minLng = points.get(0).getLng();
             double maxLng = points.get(1).getLng();
-            
+
             for (PoiPoint poiPoint : points) {
-            	double lat = poiPoint.getLat();
-            	double lng = poiPoint.getLng();
-				if(lat > maxLat){
-					maxLat = lat;
-				}
-				if(lat < minLat){
-					minLat = lat;
-				}
-				if(lng > maxLng){
-					maxLng = lng;
-				}
-				if(lng < minLng){
-					minLng = lng;
-				}
-			}
-            
+                double lat = poiPoint.getLat();
+                double lng = poiPoint.getLng();
+                if (lat > maxLat) {
+                    maxLat = lat;
+                }
+                if (lat < minLat) {
+                    minLat = lat;
+                }
+                if (lng > maxLng) {
+                    maxLng = lng;
+                }
+                if (lng < minLng) {
+                    minLng = lng;
+                }
+            }
+
             List<PoiData> datas = poiIndexService.searchPoiInRectangle(minLng, minLat, maxLng, maxLat);
             msg.setMsg("ok");
             msg.setData(datas);
+        } else {
+            msg.setMsg("failed");
         }
-        else {
-			msg.setMsg("failed");
-		}
 
         return msg;
     }

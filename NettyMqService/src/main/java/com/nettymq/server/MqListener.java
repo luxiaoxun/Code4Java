@@ -13,20 +13,20 @@ import org.springframework.amqp.core.MessageListener;
  */
 public class MqListener implements MessageListener {
 
-	private static final Logger log = LoggerFactory.getLogger(MqListener.class);
+    private static final Logger log = LoggerFactory.getLogger(MqListener.class);
 
-	public MqListener() {
+    public MqListener() {
 
-	}
+    }
 
-	public void onMessage(Message message) {
-		log.debug("Get message from rabbitMQ");
-		// do some thing with the message
-		if (message != null) {
-			for (Channel c : EchoServerHandler.channels) {
-				ByteBuf msg = Unpooled.copiedBuffer(message.getBody());
-				c.writeAndFlush(msg);
-			}
-		}
-	}
+    public void onMessage(Message message) {
+        log.debug("Get message from rabbitMQ");
+        // do some thing with the message
+        if (message != null) {
+            for (Channel c : EchoServerHandler.channels) {
+                ByteBuf msg = Unpooled.copiedBuffer(message.getBody());
+                c.writeAndFlush(msg);
+            }
+        }
+    }
 }
