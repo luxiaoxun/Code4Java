@@ -9,7 +9,8 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,8 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class SolrIndexService {
-    private static Logger log = org.slf4j.LoggerFactory
-            .getLogger(SolrIndexService.class);
+    private static Logger log = LogManager.getLogger(SolrIndexService.class);
 
     private SolrClient solrClient = null;
 
@@ -110,9 +110,7 @@ public class SolrIndexService {
                 data.setLat((double) solrDocument.getFieldValue(LatFieldName));
                 data.setLng((double) solrDocument.getFieldValue(LngFieldName));
             }
-        } catch (IOException e) {
-            log.error(e.toString());
-        } catch (SolrServerException e) {
+        } catch (Exception e) {
             log.error(e.toString());
         }
         return results;

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.luxx.client.ElasticSearchClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -16,8 +17,8 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms.Order;
 
 import com.luxx.model.EndpointData;
 
@@ -145,7 +146,7 @@ public class RedshiftIndexService {
         TermsAggregationBuilder termsBuilder = AggregationBuilders.terms("endpointUsageAgg").field("endpoint_id")
                 .size(topN);
         termsBuilder.subAggregation(AggregationBuilders.sum("sum_usage").field("ds_bytes"));
-        termsBuilder.order(Order.aggregation("sum_usage", false));
+        termsBuilder.order(BucketOrder.aggregation("sum_usage", false));
 
         resultsMap = client.getSumAggSearchOrderResult(Index, queryBuilder, termsBuilder, "endpointUsageAgg", "sum_usage");
 

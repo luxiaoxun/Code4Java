@@ -7,9 +7,8 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.queries.function.ValueSource;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
@@ -23,7 +22,10 @@ import org.locationtech.spatial4j.context.SpatialContext;
 import org.locationtech.spatial4j.distance.DistanceUtils;
 import org.locationtech.spatial4j.shape.Point;
 import org.locationtech.spatial4j.shape.Shape;
-import org.slf4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -31,14 +33,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PoiIndexService {
-
-    private static Logger log = org.slf4j.LoggerFactory
-            .getLogger(PoiIndexService.class);
+    private static Logger log = LogManager.getLogger(PoiIndexService.class);
 
     private String indexPath = "D:/IndexPoiData";
     private IndexWriter indexWriter = null;
 
-    //	private IKAnalyzer analyzer = new IKAnalyzer(true);
+    private IKAnalyzer ikAnalyzer = new IKAnalyzer(true);
     private SmartChineseAnalyzer analyzer = new SmartChineseAnalyzer(true);
 
     private DirectoryReader ireader = null;
@@ -86,11 +86,7 @@ public class PoiIndexService {
             if (ireader == null) {
                 ireader = DirectoryReader.open(directory);
             } else {
-                // if the index was changed since the provided reader was
-                // opened, open and return a new reader;
-                // else return null
-                DirectoryReader directoryReader = DirectoryReader
-                        .openIfChanged(ireader);
+                DirectoryReader directoryReader = DirectoryReader.openIfChanged(ireader);
                 if (directoryReader != null) {
                     ireader.close(); // 关闭原reader
                     ireader = directoryReader; // 赋予新reader
@@ -107,9 +103,9 @@ public class PoiIndexService {
         try {
             if (data != null) {
                 Document doc = new Document();
-                doc.add(new LongField(IDFieldName, data.getId(), Field.Store.YES));
-                doc.add(new DoubleField(LatFieldName, data.getLat(), Field.Store.YES));
-                doc.add(new DoubleField(LngFieldName, data.getLng(), Field.Store.YES));
+                doc.add(new LongPoint(IDFieldName, data.getId()));
+                doc.add(new DoublePoint(LatFieldName, data.getLat()));
+                doc.add(new DoublePoint(LngFieldName, data.getLng()));
                 doc.add(new TextField(AddressFieldName, data.getAddress(), Field.Store.YES));
                 Point point = ctx.makePoint(data.getLng(), data.getLat());
                 for (Field f : strategy.createIndexableFields(point)) {
@@ -131,9 +127,9 @@ public class PoiIndexService {
                 List<Document> docs = new ArrayList<>();
                 for (PoiData data : dataList) {
                     Document doc = new Document();
-                    doc.add(new LongField(IDFieldName, data.getId(), Field.Store.YES));
-                    doc.add(new DoubleField(LatFieldName, data.getLat(), Field.Store.YES));
-                    doc.add(new DoubleField(LngFieldName, data.getLng(), Field.Store.YES));
+                    doc.add(new LongPoint(IDFieldName, data.getId()));
+                    doc.add(new DoublePoint(LatFieldName, data.getLat()));
+                    doc.add(new DoublePoint(LngFieldName, data.getLng()));
                     doc.add(new TextField(AddressFieldName, data.getAddress(), Field.Store.YES));
                     Point point = ctx.makePoint(data.getLng(), data.getLat());
                     for (Field f : strategy.createIndexableFields(point)) {
@@ -217,16 +213,6 @@ public class PoiIndexService {
         return -1;
     }
 
-    public int searchPoiDataById(long id) {
-        IndexSearcher indexSearcher = getIndexSearcher();
-        if (indexSearcher != null) {
-            Query query = NumericRangeQuery.newLongRange(IDFieldName, id, id, true, true);
-            return doQuery(query, indexSearcher);
-        }
-
-        return -1;
-    }
-
     public List<PoiData> searchPoiInRectangle(double minLng, double minLat,
                                               double maxLng, double maxLat) {
         List<PoiData> results = new ArrayList<>();
@@ -264,8 +250,7 @@ public class PoiIndexService {
                     circle);
             Query query = strategy.makeQuery(args);
             Point pt = ctx.makePoint(lng, lat);
-            ValueSource valueSource = strategy.makeDistanceValueSource(pt,
-                    DistanceUtils.DEG_TO_KM);// the distance (in km)
+            DoubleValuesSource valueSource = strategy.makeDistanceValueSource(pt, DistanceUtils.DEG_TO_KM);// the distance (in km)
             Sort distSort = null;
             TopDocs docs = null;
             try {
