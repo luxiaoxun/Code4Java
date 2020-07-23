@@ -35,65 +35,46 @@ public class MqReceiver {
     }
 
     public void start() {
-        listenThread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Connection connection = connnectionFactory.newConnection();
-                    final Channel channel = connection.createChannel();
-                    channel.exchangeDeclare(exchangeName, "direct", true,
-                            false, null);
-                    channel.queueDeclare(queueName, true, false, false, null);
-                    channel.queueBind(queueName, exchangeName, routeKey);
+        listenThread = new Thread(() -> {
+            try {
+                Connection connection = connnectionFactory.newConnection();
+                final Channel channel = connection.createChannel();
+                channel.exchangeDeclare(exchangeName, "direct", true, false, null);
+                channel.queueDeclare(queueName, true, false, false, null);
+                channel.queueBind(queueName, exchangeName, routeKey);
 
-                    // process the message one by one
-                    channel.basicQos(1);
+                // process the message one by one
+                channel.basicQos(1);
 
-                    QueueingConsumer queueingConsumer = new QueueingConsumer(
-                            channel);
-                    // auto-ack is false
-                    channel.basicConsume(queueName, false, queueingConsumer);
-                    while (true) {
-                        final QueueingConsumer.Delivery delivery = queueingConsumer
-                                .nextDelivery();
-                        String message = new String(delivery.getBody());
-                        broudcastMsgAndAck(message, channel, delivery);
-                    }
-                } catch (Exception ex) {
-                    log.error(String.format(
-                            "Create Rabbit MQ listener error %s",
-                            ex.getMessage()));
+                QueueingConsumer queueingConsumer = new QueueingConsumer(channel);
+                // auto-ack is false
+                channel.basicConsume(queueName, false, queueingConsumer);
+                while (true) {
+                    final QueueingConsumer.Delivery delivery = queueingConsumer.nextDelivery();
+                    String message = new String(delivery.getBody());
+                    broudcastMsgAndAck(message, channel, delivery);
                 }
+            } catch (Exception ex) {
+                log.error("Create Rabbit MQ listener error: " + ex.getMessage());
             }
-        };
+        });
 
         listenThread.setDaemon(true);
         listenThread.start();
     }
 
-    private void broudcastMsgAndAck(String message, final Channel channel,
-                                    final QueueingConsumer.Delivery delivery) {
+    private void broudcastMsgAndAck(String message, final Channel channel, final QueueingConsumer.Delivery delivery) {
         // Broudcast message to all connected clients
-        // If you want to send to a specified client, just add
-        // your own logic and ack manually
+        // If you want to send to a specified client, just add your own logic and ack manually
         // Be aware that ChannelGroup is thread safe
-        if (EchoServerHandler.channels != null) {
-            log.info(String.format("Conneted client number: %d",
-                    EchoServerHandler.channels.size()));
-
-            ByteBuf msg = Unpooled.copiedBuffer(message.getBytes());
-            EchoServerHandler.channels.writeAndFlush(msg).addListener(
-                    new ChannelGroupFutureListener() {
-                        public void operationComplete(ChannelGroupFuture arg0)
-                                throws Exception {
-                            // manually ack to MQ server
-                            // when message is consumed.
-                            channel.basicAck(delivery.getEnvelope()
-                                    .getDeliveryTag(), false);
-                            log.debug("Mq Receiver get message");
-                        }
-                    });
-        }
+        log.info("Conneted client number: " + EchoServerHandler.channels.size());
+        ByteBuf msg = Unpooled.copiedBuffer(message.getBytes());
+        EchoServerHandler.channels.writeAndFlush(msg).addListener(
+                (ChannelGroupFutureListener) arg0 -> {
+                    // manually ack to MQ server when message is consumed.
+                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                    log.debug("Mq Receiver get message");
+                });
 
     }
 }

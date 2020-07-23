@@ -3,9 +3,7 @@ package com.luxx.mq.message;
 import java.nio.ByteBuffer;
 
 public class Header {
-
     private int msgLength; // The whole message length includes header
-
     private byte msgType; // one byte for message type
 
     public int getMsgLength() {

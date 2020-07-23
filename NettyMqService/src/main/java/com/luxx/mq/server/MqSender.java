@@ -14,7 +14,6 @@ public class MqSender {
     public MqSender() {
         @SuppressWarnings("resource")
         ApplicationContext applicationContext = new FileSystemXmlApplicationContext("classpath:spring-config.xml");
-
         rabbitTemplate = (RabbitTemplate) applicationContext.getBean("messageSender");
     }
 

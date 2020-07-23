@@ -1,9 +1,7 @@
 package com.luxx.mq.message;
 
 public class Message {
-
     private Header header;
-
     private byte[] data;
 
     public Header getHeader() {
@@ -29,13 +27,10 @@ public class Message {
             byte[] headerBytes = header.getBytes();
             System.arraycopy(headerBytes, 0, buffer, 0, headerBytes.length);
             if (data != null) {
-                System.arraycopy(data, 0, buffer, headerBytes.length,
-                        data.length);
+                System.arraycopy(data, 0, buffer, headerBytes.length, data.length);
             }
-
             return buffer;
         }
-
         return null;
     }
 }
