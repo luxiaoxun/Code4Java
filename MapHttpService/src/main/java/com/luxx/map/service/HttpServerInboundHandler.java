@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
+import io.netty.handler.codec.http.HttpVersion;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,8 +26,7 @@ import io.netty.handler.codec.http.QueryStringDecoder;
  * @since 2015.06.1
  */
 public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
-
-    private static Logger log = org.slf4j.LoggerFactory.getLogger(HttpServerInboundHandler.class);
+    private static Logger log = LoggerFactory.getLogger(HttpServerInboundHandler.class);
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -37,38 +36,30 @@ public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
             byte[] responseContent = null;
             try {
                 FullHttpResponse response = new DefaultFullHttpResponse(
-                        HTTP_1_1, HttpResponseStatus.NO_CONTENT);
+                        HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);
                 boolean isKeepAlive = HttpHeaders.isKeepAlive(request);
                 MapRequestParam mapRequestParam = getMapRequestParam(uri);
                 if (!mapRequestParam.isOk()) {
                     if (!isKeepAlive) {
-                        ctx.writeAndFlush(response).addListener(
-                                ChannelFutureListener.CLOSE);
+                        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
                     } else {
-                        response.headers().set(HttpHeaders.Names.CONNECTION,
-                                HttpHeaders.Values.KEEP_ALIVE);
+                        response.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
                         ctx.writeAndFlush(response);
                     }
                 } else {
-                    responseContent = MapCache.getInstance().getMapCacheTile(
-                            mapRequestParam);
+                    responseContent = MapCache.getInstance().getMapCacheTile(mapRequestParam);
                     if (responseContent != null) {
-                        response = new DefaultFullHttpResponse(HTTP_1_1,
+                        response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                                 HttpResponseStatus.OK,
                                 Unpooled.wrappedBuffer(responseContent));
-                        response.headers().set(HttpHeaders.Names.CONTENT_TYPE,
-                                "image/jpeg");
-                        response.headers().set(
-                                HttpHeaders.Names.CONTENT_LENGTH,
-                                response.content().readableBytes());
+                        response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "image/jpeg");
+                        response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, response.content().readableBytes());
                     }
 
                     if (!isKeepAlive) {
-                        ctx.writeAndFlush(response).addListener(
-                                ChannelFutureListener.CLOSE);
+                        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
                     } else {
-                        response.headers().set(HttpHeaders.Names.CONNECTION,
-                                HttpHeaders.Values.KEEP_ALIVE);
+                        response.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
                         ctx.writeAndFlush(response);
                     }
                 }

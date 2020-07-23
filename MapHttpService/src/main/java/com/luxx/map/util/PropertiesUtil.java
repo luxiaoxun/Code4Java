@@ -4,11 +4,10 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PropertiesUtil {
-
-    private static Logger log = org.slf4j.LoggerFactory
-            .getLogger(PropertiesUtil.class);
+    private static Logger log = LoggerFactory.getLogger(PropertiesUtil.class);
 
     private Properties prop = null;
     private static String propertiesFile = "/mapConfig.properties";

@@ -7,6 +7,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.sql.*;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Map服务，数据库操作
@@ -16,8 +17,7 @@ import org.slf4j.Logger;
  * @since 2015.06.1
  */
 public class MapDbOperation {
-
-    private static Logger log = org.slf4j.LoggerFactory.getLogger(MapDbOperation.class);
+    private static Logger log = LoggerFactory.getLogger(MapDbOperation.class);
 
     //private static ComboPooledDataSource pooledDs;
     private static String dbType;
@@ -29,8 +29,7 @@ public class MapDbOperation {
             //dbType = DBXMLConfiguration.GetInstance().GetDbType();
             dbType = PropertiesUtil.getInstance().GetDbType();
             if (dbType.equals("0")) {
-                sqliteDbPath = PropertiesUtil.getInstance()
-                        .GetSqliteDbPath();
+                sqliteDbPath = PropertiesUtil.getInstance().GetSqliteDbPath();
                 Class.forName("org.sqlite.JDBC");
                 return true;
             } else if (dbType.equals("1")) {

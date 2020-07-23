@@ -5,6 +5,8 @@ import java.util.concurrent.Callable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Map服务，地图缓存
@@ -14,8 +16,7 @@ import com.google.common.cache.CacheBuilder;
  * @since 2015.06.1
  */
 public class MapCache {
-
-    //private static Log log = LogFactory.getLog(MapCache.class);
+    private static Logger log = LoggerFactory.getLogger(MapCache.class);
 
     private Cache<MapRequestParam, byte[]> mapCacheLoader = null;
 
@@ -43,7 +44,7 @@ public class MapCache {
                 }
             });
         } catch (Exception e) {
-            //log.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return tileBytes;
     }
