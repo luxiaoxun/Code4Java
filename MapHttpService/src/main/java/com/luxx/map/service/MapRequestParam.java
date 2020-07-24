@@ -1,9 +1,7 @@
 package com.luxx.map.service;
 
 public class MapRequestParam {
-
     private boolean isOk;
-
     private String dbType;
     private int zoom;
     private int x;

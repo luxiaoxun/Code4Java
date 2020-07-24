@@ -35,8 +35,7 @@ public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
             final String uri = request.getUri();
             byte[] responseContent = null;
             try {
-                FullHttpResponse response = new DefaultFullHttpResponse(
-                        HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);
+                FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NO_CONTENT);
                 boolean isKeepAlive = HttpHeaders.isKeepAlive(request);
                 MapRequestParam mapRequestParam = getMapRequestParam(uri);
                 if (!mapRequestParam.isOk()) {
@@ -49,8 +48,7 @@ public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
                 } else {
                     responseContent = MapCache.getInstance().getMapCacheTile(mapRequestParam);
                     if (responseContent != null) {
-                        response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
-                                HttpResponseStatus.OK,
+                        response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
                                 Unpooled.wrappedBuffer(responseContent));
                         response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "image/jpeg");
                         response.headers().set(HttpHeaders.Names.CONTENT_LENGTH, response.content().readableBytes());
@@ -102,8 +100,7 @@ public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
                 try {
                     List<String> zoomList = paramsMap.get("z");
                     if (zoomList.size() > 0) {
-                        mapRequestParam.setZoom(Integer.parseInt(zoomList
-                                .get(0)));
+                        mapRequestParam.setZoom(Integer.parseInt(zoomList.get(0)));
                     }
                     List<String> xList = paramsMap.get("x");
                     if (xList.size() > 0) {
@@ -119,7 +116,6 @@ public class HttpServerInboundHandler extends ChannelInboundHandlerAdapter {
                     log.warn("请求Url:" + url + "不合法.异常:" + e.toString());
                     mapRequestParam.setOk(false);
                 }
-
             }
         }
 

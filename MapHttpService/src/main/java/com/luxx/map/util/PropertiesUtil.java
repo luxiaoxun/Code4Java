@@ -31,33 +31,33 @@ public class PropertiesUtil {
     }
 
     public String GetListenPort() {
-        String port = prop.getProperty("listenPort");
+        String port = prop.getProperty("port");
         return port;
     }
 
 
-    public String GetDbType() {
-        String dbType = prop.getProperty("database.dbType");
-        return dbType;
+    public int GetDbType() {
+        String dbType = prop.getProperty("database.type");
+        return Integer.valueOf(dbType);
     }
 
     public String GetSqliteDbPath() {
-        String dbPath = prop.getProperty("database.Sqlite.SqliteDbPath");
+        String dbPath = prop.getProperty("database.sqlite.path");
         return dbPath;
     }
 
     public String GetMysqlUrl() {
-        String url = prop.getProperty("database.Mysql.Url");
+        String url = prop.getProperty("database.mysql.url");
         return url;
     }
 
     public String GetMysqlUser() {
-        String user = prop.getProperty("database.Mysql.User");
+        String user = prop.getProperty("database.mysql.username");
         return user;
     }
 
     public String GetMysqlPassword() {
-        String pswd = prop.getProperty("database.Mysql.Password");
+        String pswd = prop.getProperty("database.mysql.password");
         return pswd;
     }
 
