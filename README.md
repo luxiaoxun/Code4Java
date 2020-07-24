@@ -23,8 +23,8 @@ A simple Http Map Service providing tile image.
 A simple web GIS page based on [leaflet](https://github.com/Leaflet/Leaflet).
 #### 中文详情([Chinese Details](http://www.cnblogs.com/luxiaoxun/p/5022333.html))
 How to use WebGISDemo with MapHttpService:
-1. Start MapHttpService with right datasurce, an example:
-   >listenPort=8899   
-   >database.dbType=0  # Use SQLite  
-   >database.Sqlite.SqliteDbPath=D:\\GIS\\MapDownloader\\MapDownloader\\bin\\Release\\MapCache\\TileDBv5\\en\\Data.gmdb  
+1. Start MapHttpService with right data source, an example:
+   >listenPort=8899
+   >database.dbType=0 # Use SQLite 
+   >database.Sqlite.SqliteDbPath=D:\\MapCache\\TileDBv5\\en\\Data.gmdb
 2. Publish the page "map.html" to chrome to play.
