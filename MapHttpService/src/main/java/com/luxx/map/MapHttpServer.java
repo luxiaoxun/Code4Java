@@ -80,18 +80,9 @@ public class MapHttpServer {
     }
 
     public static void main(String[] args) {
-        boolean isOK = false;
-        //final String portString = DBXMLConfiguration.GetInstance().GetListenPort();
         final String portString = PropertiesUtil.getInstance().GetListenPort();
         final int port = Integer.parseInt(portString);
-
-        try {
-            isOK = MapDbOperation.init();
-        } catch (ClassNotFoundException e) {
-            log.error("Init database failed! " + e.getMessage());
-        } catch (SQLException e) {
-            log.error("Init database failed! " + e.getMessage());
-        }
+        boolean isOK = MapDbOperation.init();
         if (isOK) {
             final MapHttpServer server = new MapHttpServer();
             try {
