@@ -1,12 +1,8 @@
 package com.luxx.map;
 
-import java.sql.SQLException;
-
 import com.luxx.map.service.HttpServerInboundHandler;
 import com.luxx.map.service.MapDbOperation;
 import com.luxx.map.util.PropertiesUtil;
-import org.slf4j.Logger;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -20,6 +16,8 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutorGroup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Map服务，主程序
@@ -29,8 +27,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
  * @since 2015.06.1
  */
 public class MapHttpServer {
-
-    private static Logger log = org.slf4j.LoggerFactory.getLogger(MapHttpServer.class);
+    private static Logger log = LoggerFactory.getLogger(MapHttpServer.class);
 
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;

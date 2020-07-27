@@ -3,7 +3,6 @@ package com.luxx.model;
 import java.io.Serializable;
 
 public class PoiData implements Serializable {
-
     private static final long serialVersionUID = -3978597686509612192L;
 
     private long id;
@@ -55,6 +54,5 @@ public class PoiData implements Serializable {
     public void setLng(double lng) {
         this.lng = lng;
     }
-
 
 }

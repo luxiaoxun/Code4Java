@@ -8,7 +8,6 @@ import com.rabbitmq.client.QueueingConsumer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.ChannelGroupFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

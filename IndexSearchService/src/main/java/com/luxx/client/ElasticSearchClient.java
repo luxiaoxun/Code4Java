@@ -40,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ElasticSearchClient {
-
     private static Logger log = LogManager.getLogger(ElasticSearchClient.class);
 
     // ES Client
@@ -97,7 +96,6 @@ public class ElasticSearchClient {
         return null;
     }
 
-    @SuppressWarnings("resource")
     public ElasticSearchClient(String ipAddress, int port) {
         try {
             client = new PreBuiltTransportClient(Settings.EMPTY)

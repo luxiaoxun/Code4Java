@@ -15,7 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class RedshiftDataTransferExecutor {
-
     private static Logger log = LogManager.getLogger(RedshiftDataTransferExecutor.class);
 
     private RedshiftIndexService indexService = new RedshiftIndexService();

@@ -28,8 +28,7 @@ public class PoiIndexExecutor {
     private String dataTableName;
 
     public PoiIndexExecutor() {
-        this.dataTableName = PropertiesUtil.getInstance().getProperty(
-                "mysql.database.data");
+        this.dataTableName = PropertiesUtil.getInstance().getProperty("mysql.database.data");
     }
 
     public void start() throws IOException {

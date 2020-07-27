@@ -12,7 +12,6 @@ import io.netty.handler.timeout.IdleStateEvent;
  * Handler implementation for heart beating.
  */
 public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
-
     private static final Logger log = LoggerFactory.getLogger(HeartBeatHandler.class);
 
     @Override
@@ -23,7 +22,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
                 // Read timeout
                 // System.out.println("READER_IDLE: read timeout from "+ctx.channel().remoteAddress());
                 // ctx.disconnect(); //Channel disconnect
-                log.info("READER_IDLE: read timeout from " + ctx.channel().remoteAddress());
+                log.info("READER_IDLE: read idle from " + ctx.channel().remoteAddress());
             }
         }
     }

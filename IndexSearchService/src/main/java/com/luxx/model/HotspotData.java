@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class HotspotData implements Serializable {
-
     private static final long serialVersionUID = -2132799122365334550L;
 
     private Long id;

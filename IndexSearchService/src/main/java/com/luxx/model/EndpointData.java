@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class EndpointData implements Serializable {
-
     private static final long serialVersionUID = 1493676048457257941L;
 
     private int org_id;

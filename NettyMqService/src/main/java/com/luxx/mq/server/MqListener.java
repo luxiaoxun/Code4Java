@@ -13,11 +13,9 @@ import org.springframework.amqp.core.MessageListener;
  * RabbitMQ Listener based on Spring AMQP
  */
 public class MqListener implements MessageListener {
-
     private static final Logger log = LoggerFactory.getLogger(MqListener.class);
 
     public MqListener() {
-
     }
 
     public void onMessage(Message message) {

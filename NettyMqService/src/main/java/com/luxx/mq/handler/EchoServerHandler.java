@@ -1,6 +1,7 @@
 package com.luxx.mq.handler;
 
 import com.luxx.mq.server.MqSender;
+import com.luxx.mq.message.Message;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.CharsetUtil;
@@ -13,13 +14,11 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.luxx.mq.message.Message;
 
 /**
  * Handler implementation for the echo server.
  */
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
-
     private static final Logger log = LoggerFactory.getLogger(EchoServerHandler.class);
 
     public static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
@@ -63,8 +62,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
-            throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         ctx.close();
         log.warn(cause.getMessage());
     }

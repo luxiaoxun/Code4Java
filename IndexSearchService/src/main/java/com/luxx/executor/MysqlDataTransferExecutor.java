@@ -17,7 +17,6 @@ import com.luxx.model.HotspotData;
 import com.luxx.util.DataSourceUtil;
 
 public class MysqlDataTransferExecutor {
-
     private static Logger log = LogManager.getLogger(MysqlDataTransferExecutor.class);
 
     private MysqlIndexService indexService = new MysqlIndexService();

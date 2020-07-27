@@ -23,7 +23,6 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilde
 import com.luxx.model.EndpointData;
 
 public class RedshiftIndexService {
-
     private static Logger log = LogManager.getLogger(RedshiftIndexService.class);
 
     private ElasticSearchClient client = ElasticSearchClient.getInstance();
