@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="10" status="off">
+    <properties>
+        <property name="LOG_HOME">${sys:user.dir}/logs/</property>
+        <property name="FILE_NAME">app</property>
+    </properties>
+    <Appenders>
+        <RollingRandomAccessFile fileName="${LOG_HOME}/${FILE_NAME}.log"
+            filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log.zip" name="append-file-log">
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread]%logger{36}:%L - %msg%n" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="20 MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="20" />
+        </RollingRandomAccessFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger additivity="false" level="info" name="com.luxx">
+            <AppenderRef ref="append-file-log" />
+        </Logger>
+        <logger additivity="false" level="error" name="org.springframework">
+            <AppenderRef ref="append-file-log" />
+        </logger>
+        <logger additivity="false" level="error" name="org.mybatis">
+            <AppenderRef ref="append-file-log" />
+        </logger>
+    </Loggers>
+</Configuration>

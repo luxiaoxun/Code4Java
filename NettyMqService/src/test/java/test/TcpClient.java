@@ -8,7 +8,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
-import com.luxx.mq.message.*;
+import com.luxx.mq.message.Header;
+import com.luxx.mq.message.Message;
 
 /**
  * Tcp client for echo server. This client also receive message forwarded by

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration monitorInterval="10" status="off">
+	<properties>
+		<property name="LOG_HOME">${sys:user.dir}/logs/</property>
+		<property name="FILE_NAME">app</property>
+	</properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%L - %msg%n" />
+		</Console>
+		<RollingRandomAccessFile fileName="${LOG_HOME}/${FILE_NAME}.log"
+			filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log.zip" name="append-file-log">
+			<PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread]%logger{36}:%L - %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="20 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingRandomAccessFile>
+	</Appenders>
+
+	<Loggers>
+		<Logger additivity="true" level="info" name="com.luxx">
+			<AppenderRef ref="append-file-log" />
+		</Logger>
+		<logger additivity="true" level="info" name="org.springframework">
+			<AppenderRef ref="append-file-log" />
+		</logger>
+		<logger additivity="true" level="info" name="org.mybatis">
+			<AppenderRef ref="append-file-log" />
+		</logger>
+		<logger additivity="true" level="info" name="org.springframework.jdbc.core">
+			<AppenderRef ref="append-file-log" />
+		</logger>
+		<Root level="info">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+</Configuration>

@@ -24,7 +24,7 @@
             <rabbit:binding queue="MqListenerQueue" key="mqListener"/>
         </rabbit:bindings>
     </rabbit:direct-exchange>
-    <bean id="messageListener" class="com.luxx.mq.server.MqListener">
+    <bean id="messageListener" class="MqListener">
     </bean>
     <rabbit:listener-container connection-factory="connectionFactory">
         <rabbit:listener queues="MqListenerQueue" ref="messageListener" method="onMessage" />

@@ -16,6 +16,7 @@
         <es.version>6.2.4</es.version>
         <jackson.version>2.10.1</jackson.version>
         <log4j2.version>2.13.3</log4j2.version>
+        <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
     </properties>
 
     <repositories>
@@ -32,6 +33,13 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/lucene-analyzers-ik-1.0.jar</systemPath>
+        </dependency>
+
+        <!-- son-smart -->
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>2.3</version>
         </dependency>
 
         <dependency>
@@ -107,13 +115,6 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.amazon.redshift</groupId>
             <artifactId>redshift-jdbc42</artifactId>
             <version>1.2.1.1001</version>
@@ -168,13 +169,6 @@
             <groupId>com.chenlb.mmseg4j</groupId>
             <artifactId>mmseg4j-solr</artifactId>
             <version>2.3.0</version>
-        </dependency>
-
-        <!-- solr-solrj -->
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-solrj</artifactId>
-            <version>5.2.1</version>
         </dependency>
 
         <!-- httpclient -->
