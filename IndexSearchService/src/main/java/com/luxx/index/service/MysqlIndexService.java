@@ -97,7 +97,7 @@ public class MysqlIndexService {
         return XContentFactory.jsonBuilder().map(map);
     }
 
-    // 得到索引字符串
+    // Build json data
     public String getIndexDataFromHotspotData(HotspotData data) {
         String jsonString = null;
         if (data != null) {

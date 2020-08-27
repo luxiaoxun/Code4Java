@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.luxx.web.dao.StationMapper">
+    <resultMap id="stationResultMap" type="com.luxx.web.model.Station">
+        <result property="id" column="id"/>
+        <result property="countryCode" column="country_code"/>
+        <result property="provider" column="provider"/>
+        <result property="lac" column="lac"/>
+        <result property="cell" column="cell"/>
+        <result property="latitude" column="latitude"/>
+        <result property="longitude" column="longitude"/>
+        <result property="address" column="address"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+                id,
+                country_code,
+                provider,
+                lac,
+                cell,
+                latitude,
+                longitude,
+                address
+    </sql>
+
+    <select id="getAllStation" resultMap="stationResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM station
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyColumn="id" keyProperty="id"
+            parameterType="com.luxx.web.model.Station">
+        INSERT INTO station
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test='null != countryCode'>
+                country_code,
+            </if>
+            <if test='null != provider'>
+                provider,
+            </if>
+            <if test='null != lac'>
+                lac,
+            </if>
+            <if test='null != cell'>
+                cell,
+            </if>
+            <if test='null != latitude'>
+                latitude,
+            </if>
+            <if test='null != longitude'>
+                longitude,
+            </if>
+            <if test='null != address'>
+                address
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test='null != countryCode'>
+                #{countryCode},
+            </if>
+            <if test='null != provider'>
+                #{provider},
+            </if>
+            <if test='null != lac'>
+                #{lac},
+            </if>
+            <if test='null != cell'>
+                #{cell},
+            </if>
+            <if test='null != latitude'>
+                #{latitude},
+            </if>
+            <if test='null != longitude'>
+                #{longitude},
+            </if>
+            <if test='null != address'>
+                #{address}
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM station
+        WHERE id = #{id}
+    </delete>
+
+    <update id="update" parameterType="com.luxx.web.model.Station">
+        UPDATE station
+        <set>
+            <if test='null != countryCode'>country_code = #{countryCode},</if>
+            <if test='null != provider'>provider = #{provider},</if>
+            <if test='null != lac'>lac = #{lac},</if>
+            <if test='null != cell'>cell = #{cell},</if>
+            <if test='null != latitude'>latitude = #{latitude},</if>
+            <if test='null != longitude'>longitude = #{longitude},</if>
+            <if test='null != address'>address = #{address}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="pageListCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM station
+    </select>
+
+    <select id="pageList" resultMap="stationResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM station
+        LIMIT #{offset}, #{pageSize}
+    </select>
+
+</mapper>
+

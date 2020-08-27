@@ -39,7 +39,7 @@ public class PoiIndexService {
     private String indexPath = "D:/IndexPoiData";
     private IndexWriter indexWriter = null;
 
-    private IKAnalyzer ikAnalyzer = new IKAnalyzer(true);
+    //    private IKAnalyzer ikAnalyzer = new IKAnalyzer(true);
     private SmartChineseAnalyzer analyzer = new SmartChineseAnalyzer(true);
 
     private DirectoryReader directoryReader = null;
@@ -183,15 +183,14 @@ public class PoiIndexService {
         return 0;
     }
 
-    public int searchPoiData(String queryText) {
+    public int searchPoiDataByAddress(String address) {
         IndexSearcher indexSearcher = getIndexSearcher();
         if (indexSearcher != null) {
             QueryBuilder builder = new QueryBuilder(analyzer);
-            Query query = builder.createPhraseQuery(AddressFieldName, queryText);
+            Query query = builder.createPhraseQuery(AddressFieldName, address);
             return doQuery(query, indexSearcher);
         }
-
-        return -1;
+        return 0;
     }
 
     public List<PoiData> searchPoiInRectangle(double minLng, double minLat, double maxLng, double maxLat) {
@@ -236,8 +235,7 @@ public class PoiIndexService {
             TopDocs docs = null;
             try {
                 // false = asc dist
-                distSort = new Sort(valueSource.getSortField(false))
-                        .rewrite(indexSearcher);
+                distSort = new Sort(valueSource.getSortField(false)).rewrite(indexSearcher);
                 docs = indexSearcher.search(query, maxResultCount, distSort);
             } catch (IOException e) {
                 log.error(e.toString());

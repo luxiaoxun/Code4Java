@@ -15,8 +15,6 @@ public class Station {
 
     private double longitude;
 
-    private double range;
-
     private String address;
 
     public Station() {
@@ -79,14 +77,6 @@ public class Station {
         this.longitude = longitude;
     }
 
-    public double getRange() {
-        return range;
-    }
-
-    public void setRange(double range) {
-        this.range = range;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -105,7 +95,6 @@ public class Station {
                 ", cell='" + cell + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", range=" + range +
                 ", address='" + address + '\'' +
                 '}';
     }

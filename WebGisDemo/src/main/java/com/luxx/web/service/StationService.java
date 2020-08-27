@@ -13,6 +13,6 @@ public class StationService {
     private StationMapper stationMapper;
 
     public List<Station> getAllBaseStation() {
-        return stationMapper.getAllBaseStation();
+        return stationMapper.getAllStation();
     }
 }

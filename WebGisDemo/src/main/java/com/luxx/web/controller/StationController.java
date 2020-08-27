@@ -44,7 +44,7 @@ public class StationController {
         double radius = request.getRadius();
         double lat = request.getLat();
         double lng = request.getLng();
-        List<PoiData> dataList = indexService.searchPoiInCircle(lng, lat, radius / 1000);
+        List<PoiData> dataList = indexService.searchPoiInCircle(lng, lat, radius);
         ResultData msg = new ResultData();
         msg.setMsg("ok");
         msg.setData(dataList);

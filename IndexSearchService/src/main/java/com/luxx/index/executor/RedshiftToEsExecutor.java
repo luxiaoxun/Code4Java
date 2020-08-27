@@ -14,8 +14,8 @@ import com.luxx.index.util.PropertiesUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class RedshiftDataTransferExecutor {
-    private static Logger log = LogManager.getLogger(RedshiftDataTransferExecutor.class);
+public class RedshiftToEsExecutor {
+    private static Logger log = LogManager.getLogger(RedshiftToEsExecutor.class);
 
     private RedshiftIndexService indexService = new RedshiftIndexService();
 
@@ -26,21 +26,21 @@ public class RedshiftDataTransferExecutor {
 
     private String dataTableName;
 
-    public RedshiftDataTransferExecutor() {
+    public RedshiftToEsExecutor() {
         this.dataTableName = PropertiesUtil.getInstance().getProperty("db.table");
     }
 
     public void start() {
-        // log.info("Delete old index...");
+        // log.info("Delete old index");
         //indexService.deleteIndex();
 
-        log.info("Create new index...");
+        log.info("Create new index");
         indexService.createIndex();
 
-        log.info("Create new index type mapping...");
+        log.info("Create new index type mapping");
         indexService.defineIndexTypeMapping();
 
-        log.info("Start index ...");
+        log.info("Start index redshift data to ES");
         Thread exportThread = new Thread(new Runnable() {
             public void run() {
                 while (!isFinished) {
@@ -50,7 +50,7 @@ public class RedshiftDataTransferExecutor {
                         log.info(String.format("Index data complete %s pages", pageNum));
                     }
                 }
-                log.info("Index complete ...");
+                log.info("Index redshift data to ES complete");
             }
         });
         exportThread.start();

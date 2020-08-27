@@ -6,14 +6,11 @@ public class PoiData implements Serializable {
     private static final long serialVersionUID = -3978597686509612192L;
 
     private long id;
-
     private String address;
-
     private double lat;
     private double lng;
 
     public PoiData() {
-
     }
 
     public PoiData(int id, String address, double lat, double lng) {

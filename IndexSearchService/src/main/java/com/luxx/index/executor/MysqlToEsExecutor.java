@@ -16,24 +16,24 @@ import org.apache.logging.log4j.Logger;
 
 import com.luxx.index.util.DataSourceUtil;
 
-public class MysqlDataTransferExecutor {
-    private static Logger log = LogManager.getLogger(MysqlDataTransferExecutor.class);
+public class MysqlToEsExecutor {
+    private static Logger log = LogManager.getLogger(MysqlToEsExecutor.class);
 
     private MysqlIndexService indexService = new MysqlIndexService();
 
     // 读取数据分页
     private long pageNum = 0;
     private int pageCount = 30000;
-    private boolean isFinished = false;
+    private volatile boolean isFinished = false;
 
     private String dataTableName;
 
-    public MysqlDataTransferExecutor() {
+    public MysqlToEsExecutor() {
         this.dataTableName = PropertiesUtil.getInstance().getProperty("db.table");
     }
 
     public void start() {
-        log.info("Start index ...");
+        log.info("Start index mysql data to ES");
 
         //indexService.deleteIndex();
         indexService.createIndex();
@@ -48,14 +48,14 @@ public class MysqlDataTransferExecutor {
                         log.info(String.format("Index data complete %s pages", pageNum));
                     }
                 }
-                log.info("Index complete ...");
+                log.info("Index mysql data to ES complete ");
             }
         });
         exportThread.start();
     }
 
     private List<HotspotData> getDataFromOldDataBase() {
-        List<HotspotData> dataList = new ArrayList<HotspotData>(pageCount);
+        List<HotspotData> dataList = new ArrayList<>(pageCount);
         Connection dbConnection = null;
         Statement stm = null;
         ResultSet res = null;

@@ -7,5 +7,15 @@ import java.util.List;
 
 @Mapper
 public interface StationMapper {
-    List<Station> getAllBaseStation();
+    List<Station> getAllStation();
+
+    int insert(Station station);
+
+    int delete(int id);
+
+    int update(Station station);
+
+    int pageListCount();
+
+    List<Station> pageList(int offset, int pageSize);
 }

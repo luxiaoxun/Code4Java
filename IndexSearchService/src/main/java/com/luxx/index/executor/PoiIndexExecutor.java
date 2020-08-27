@@ -32,7 +32,7 @@ public class PoiIndexExecutor {
     }
 
     public void start() {
-        log.info("开始索引数据服务......");
+        log.info("Start index POI");
         try {
             indexService = new PoiIndexService();
             indexService.clear();
@@ -43,18 +43,18 @@ public class PoiIndexExecutor {
                     while (isRunning) {
                         List<PoiData> dataList = getDataFromOldDataBase();
                         if (dataList == null || dataList.isEmpty()) {
-                            log.info("数据服务完成......");
+                            log.info("Index POI finished");
                             break;
                         }
                         int len = dataList.size();
                         indexService.indexPoiDataList(dataList);
-                        log.info("索引数据最大ID：" + dataList.get(len - 1).getId());
+                        log.info("Index POI max id：" + dataList.get(len - 1).getId());
                     }
                 }
             });
             exportThread.start();
         } catch (Exception ex) {
-            log.error("索引服务异常：" + ex.toString());
+            log.error("Index POI exception：" + ex.toString());
         }
     }
 
@@ -83,7 +83,7 @@ public class PoiIndexExecutor {
                     }
                 }
             } else {
-                log.error("获取数据库连接失败！");
+                log.error("Get connection fail");
                 return null;
             }
         } catch (SQLException e) {
