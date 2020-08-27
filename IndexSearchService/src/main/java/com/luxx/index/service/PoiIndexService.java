@@ -73,8 +73,6 @@ public class PoiIndexService {
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setOpenMode(OpenMode.CREATE_OR_APPEND);
         indexWriter = new IndexWriter(directory, config);
-        // Delete all data in directory
-        indexWriter.deleteAll();
 
         // Typical geo spatial context
         // These can also be constructed from SpatialContextFactory
@@ -101,7 +99,7 @@ public class PoiIndexService {
         } catch (Exception e) {
             log.error(e.toString());
         }
-        return null; // 发生异常则返回null
+        return null;
     }
 
     public boolean indexPoiDataList(List<PoiData> dataList) {
@@ -115,7 +113,6 @@ public class PoiIndexService {
                     doc.add(new StoredField(LngFieldName, data.getLng()));
                     doc.add(new TextField(AddressFieldName, data.getAddress(), Field.Store.YES));
                     Point point = shapeFactory.pointXY(data.getLng(), data.getLat());
-//                    Point point = spatialContext.makePoint(data.getLng(), data.getLat());
                     for (Field f : spatialStrategy.createIndexableFields(point)) {
                         doc.add(f);
                     }
@@ -134,10 +131,10 @@ public class PoiIndexService {
 
     private void printDocs(ScoreDoc[] scoreDocs, IndexSearcher indexSearcher) {
         if (scoreDocs != null) {
-            log.info("总数：" + scoreDocs.length);
-            for (int i = 0; i < scoreDocs.length; i++) {
+            log.info("Total count：" + scoreDocs.length);
+            for (ScoreDoc scoreDoc : scoreDocs) {
                 try {
-                    Document hitDoc = indexSearcher.doc(scoreDocs[i].doc);
+                    Document hitDoc = indexSearcher.doc(scoreDoc.doc);
                     log.info(hitDoc.get(IDFieldName));
                     log.info(hitDoc.get(LngFieldName));
                     log.info(hitDoc.get(LatFieldName));
@@ -152,10 +149,10 @@ public class PoiIndexService {
     private List<PoiData> getDataFromSearchResult(ScoreDoc[] scoreDocs, IndexSearcher indexSearcher) {
         List<PoiData> datas = new ArrayList<>();
         if (scoreDocs != null) {
-            log.info("总数：" + scoreDocs.length);
-            for (int i = 0; i < scoreDocs.length; i++) {
+            log.info("Total count：" + scoreDocs.length);
+            for (ScoreDoc scoreDoc : scoreDocs) {
                 try {
-                    Document hitDoc = indexSearcher.doc(scoreDocs[i].doc);
+                    Document hitDoc = indexSearcher.doc(scoreDoc.doc);
                     PoiData data = new PoiData();
                     data.setId(Long.parseLong((hitDoc.get(IDFieldName))));
                     data.setLng(Double.parseDouble(hitDoc.get(LngFieldName)));
@@ -201,9 +198,10 @@ public class PoiIndexService {
         List<PoiData> results = new ArrayList<>();
         IndexSearcher indexSearcher = getIndexSearcher();
         if (indexSearcher != null) {
-            Point lowerLeftPoint = spatialContext.makePoint(minLng, minLat);
-            Point upperRightPoint = spatialContext.makePoint(maxLng, maxLat);
-            Shape rect = spatialContext.makeRectangle(lowerLeftPoint, upperRightPoint);
+            Point lowerLeftPoint = shapeFactory.pointXY(minLng, minLat);
+            Point upperRightPoint = shapeFactory.pointXY(maxLng, maxLat);
+            Shape rect = shapeFactory.rect(lowerLeftPoint, upperRightPoint);
+
             SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, rect);
             Query query = spatialStrategy.makeQuery(args);
             TopDocs docs = null;
@@ -227,13 +225,13 @@ public class PoiIndexService {
         List<PoiData> results = new ArrayList<>();
         IndexSearcher indexSearcher = getIndexSearcher();
         if (indexSearcher != null) {
-            Shape circle = spatialContext.makeCircle(lng, lat, DistanceUtils.dist2Degrees(
+            Point pt = shapeFactory.pointXY(lng, lat);
+            Shape circle = shapeFactory.circle(pt, DistanceUtils.dist2Degrees(
                     radius, DistanceUtils.EARTH_MEAN_RADIUS_KM));
-            SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects,
-                    circle);
+            SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, circle);
             Query query = spatialStrategy.makeQuery(args);
-            Point pt = spatialContext.makePoint(lng, lat);
-            DoubleValuesSource valueSource = spatialStrategy.makeDistanceValueSource(pt, DistanceUtils.DEG_TO_KM);// the distance (in km)
+            // the distance (in km)
+            DoubleValuesSource valueSource = spatialStrategy.makeDistanceValueSource(pt, DistanceUtils.DEG_TO_KM);
             Sort distSort = null;
             TopDocs docs = null;
             try {
@@ -255,25 +253,23 @@ public class PoiIndexService {
         return results;
     }
 
-    public List<PoiData> searchPoiByRangeAndAddress(double lng, double lat, double range, String address) {
+    public List<PoiData> searchPoiInCircleAndAddress(double lng, double lat, double radius, String address) {
         List<PoiData> results = new ArrayList<>();
         IndexSearcher indexSearcher = getIndexSearcher();
         if (indexSearcher != null) {
-            SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects,
-                    spatialContext.makeCircle(lng, lat, DistanceUtils.dist2Degrees(range,
-                            DistanceUtils.EARTH_MEAN_RADIUS_KM)));
+            Point pt = shapeFactory.pointXY(lng, lat);
+            Shape circle = shapeFactory.circle(pt, DistanceUtils.dist2Degrees(
+                    radius, DistanceUtils.EARTH_MEAN_RADIUS_KM));
+            SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, circle);
             Query geoQuery = spatialStrategy.makeQuery(args);
 
             QueryBuilder builder = new QueryBuilder(analyzer);
-            Query addQuery = builder.createPhraseQuery(AddressFieldName,
-                    address);
-
+            Query phraseQuery = builder.createPhraseQuery(AddressFieldName, address);
             BooleanQuery.Builder boolBuilder = new BooleanQuery.Builder();
-            boolBuilder.add(addQuery, Occur.SHOULD);
+            boolBuilder.add(phraseQuery, Occur.SHOULD);
             boolBuilder.add(geoQuery, Occur.MUST);
 
             Query query = boolBuilder.build();
-
             TopDocs docs = null;
             try {
                 docs = indexSearcher.search(query, maxResultCount);
@@ -311,6 +307,7 @@ public class PoiIndexService {
     public void clear() {
         if (indexWriter != null) {
             try {
+                log.info("删除已有数据");
                 indexWriter.deleteAll();
             } catch (IOException e) {
                 log.error(e.toString());
