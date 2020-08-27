@@ -307,7 +307,7 @@ public class PoiIndexService {
     public void clear() {
         if (indexWriter != null) {
             try {
-                log.info("删除已有数据");
+                log.info("Delete all exist data");
                 indexWriter.deleteAll();
             } catch (IOException e) {
                 log.error(e.toString());
