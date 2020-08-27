@@ -23,41 +23,43 @@ public class PoiIndexExecutor {
 
     // 读取数据分页
     private long pageNum = 0;
-    private int pageCount = 30000;
+    private int pageCount = 1000;
 
     private String dataTableName;
 
     public PoiIndexExecutor() {
-        this.dataTableName = PropertiesUtil.getInstance().getProperty("mysql.database.data");
+        this.dataTableName = PropertiesUtil.getInstance().getProperty("db.table");
     }
 
-    public void start() throws IOException {
-        log.info("开始数据迁移服务......");
+    public void start() {
+        log.info("开始索引数据服务......");
+        try {
+            indexService = new PoiIndexService();
+            indexService.clear();
 
-        indexService = new PoiIndexService();
-        indexService.clear();
-
-        Thread exportThread = new Thread(new Runnable() {
-            public void run() {
-                boolean isRunning = true;
-                while (isRunning) {
-                    List<PoiData> dataList = getDataFromOldDataBase();
-                    if (dataList == null || dataList.isEmpty()) {
-                        isRunning = false; // 读取完毕
-                        log.info("数据迁移服务完成......");
-                        break;
+            Thread exportThread = new Thread(new Runnable() {
+                public void run() {
+                    boolean isRunning = true;
+                    while (isRunning) {
+                        List<PoiData> dataList = getDataFromOldDataBase();
+                        if (dataList == null || dataList.isEmpty()) {
+                            log.info("数据服务完成......");
+                            break;
+                        }
+                        int len = dataList.size();
+                        indexService.indexPoiDataList(dataList);
+                        log.info("索引数据最大ID：" + dataList.get(len - 1).getId());
                     }
-                    int len = dataList.size();
-                    indexService.indexPoiDataList(dataList);
-                    System.out.println("索引热点数据最大ID：" + dataList.get(len - 1).getId());
                 }
-            }
-        });
-        exportThread.start();
+            });
+            exportThread.start();
+        } catch (Exception ex) {
+            log.error("索引服务异常：" + ex.toString());
+        }
     }
 
     private List<PoiData> getDataFromOldDataBase() {
-        List<PoiData> dataList = new ArrayList<PoiData>(pageCount);
+        List<PoiData> dataList = new ArrayList<>(pageCount);
         Connection dbConnection = null;
         Statement stm = null;
         ResultSet res = null;
@@ -73,10 +75,10 @@ public class PoiIndexExecutor {
                 if (res != null) {
                     while (res.next()) {
                         PoiData data = new PoiData();
-                        data.setId(res.getInt("BaseStationId"));
-                        data.setAddress(res.getString("Address"));
-                        data.setLat(res.getDouble("Latitude"));
-                        data.setLng(res.getDouble("Longitude"));
+                        data.setId(res.getInt("id"));
+                        data.setAddress(res.getString("address"));
+                        data.setLat(res.getDouble("latitude"));
+                        data.setLng(res.getDouble("longitude"));
                         dataList.add(data);
                     }
                 }

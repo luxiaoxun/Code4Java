@@ -1,12 +1,12 @@
 package com.luxx.web.controller;
 
-import com.luxx.web.model.BaseStation;
+import com.luxx.web.model.Station;
 import com.luxx.index.model.PoiData;
 import com.luxx.web.model.PoiPoint;
 import com.luxx.web.model.ResultData;
 import com.luxx.web.model.request.DataInCircleRequest;
 import com.luxx.web.model.request.DataInRectangleRequest;
-import com.luxx.web.service.BaseStationService;
+import com.luxx.web.service.StationService;
 import com.luxx.web.service.IndexService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,9 +20,9 @@ import java.util.List;
 @RequestMapping("/station")
 @Api(tags = "station")
 @Slf4j
-public class BaseStationController {
+public class StationController {
     @Autowired
-    private BaseStationService baseStationService;
+    private StationService stationService;
 
     @Autowired
     private IndexService indexService;
@@ -30,10 +30,10 @@ public class BaseStationController {
     @GetMapping("/loadData")
     @ApiOperation(value = "loadData", notes = "loadData")
     public ResultData loadData() {
-        List<BaseStation> baseStationList = baseStationService.getAllBaseStation();
+        List<Station> stationList = stationService.getAllBaseStation();
         ResultData msg = new ResultData();
         msg.setMsg("ok");
-        msg.setData(baseStationList);
+        msg.setData(stationList);
         return msg;
     }
 

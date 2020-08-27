@@ -33,7 +33,6 @@ public class MysqlDataTransferExecutor {
     }
 
     public void start() {
-
         log.info("Start index ...");
 
         //indexService.deleteIndex();

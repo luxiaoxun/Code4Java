@@ -1,6 +1,6 @@
 package com.luxx.web.model;
 
-public class BaseStation {
+public class Station {
     private long id;
 
     private String countryCode;
@@ -15,15 +15,11 @@ public class BaseStation {
 
     private double longitude;
 
-    private double r_latitude;
-
-    private double r_longitude;
-
     private double range;
 
     private String address;
 
-    public BaseStation() {
+    public Station() {
 
     }
 
@@ -83,22 +79,6 @@ public class BaseStation {
         this.longitude = longitude;
     }
 
-    public double getR_latitude() {
-        return r_latitude;
-    }
-
-    public void setR_latitude(double r_latitude) {
-        this.r_latitude = r_latitude;
-    }
-
-    public double getR_longitude() {
-        return r_longitude;
-    }
-
-    public void setR_longitude(double r_longitude) {
-        this.r_longitude = r_longitude;
-    }
-
     public double getRange() {
         return range;
     }
@@ -117,7 +97,7 @@ public class BaseStation {
 
     @Override
     public String toString() {
-        return "BaseStation{" +
+        return "Station{" +
                 "id=" + id +
                 ", countryCode='" + countryCode + '\'' +
                 ", provider='" + provider + '\'' +
@@ -125,8 +105,6 @@ public class BaseStation {
                 ", cell='" + cell + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
-                ", r_latitude=" + r_latitude +
-                ", r_longitude=" + r_longitude +
                 ", range=" + range +
                 ", address='" + address + '\'' +
                 '}';

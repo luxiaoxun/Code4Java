@@ -30,7 +30,7 @@ public class DataSourceUtil {
         if (dbType.equals("redshift")) {
             config.setDriverClassName("com.amazon.redshift.jdbc.Driver");
         } else if (dbType.equals("mysql")) {
-            config.setDriverClassName("com.mysql.jdbc.Driver");
+            config.setDriverClassName("com.mysql.cj.jdbc.Driver");
         }
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");

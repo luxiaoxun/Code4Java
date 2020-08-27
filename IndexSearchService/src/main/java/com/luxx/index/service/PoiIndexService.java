@@ -25,6 +25,7 @@ import org.locationtech.spatial4j.shape.Shape;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.locationtech.spatial4j.shape.ShapeFactory;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import java.io.IOException;
@@ -41,12 +42,13 @@ public class PoiIndexService {
     private IKAnalyzer ikAnalyzer = new IKAnalyzer(true);
     private SmartChineseAnalyzer analyzer = new SmartChineseAnalyzer(true);
 
-    private DirectoryReader ireader = null;
+    private DirectoryReader directoryReader = null;
     private Directory directory = null;
 
     // Spatial index and search
-    private SpatialContext ctx;
-    private SpatialStrategy strategy;
+    private SpatialContext spatialContext;
+    private ShapeFactory shapeFactory;
+    private SpatialStrategy spatialStrategy;
 
     // Field Name
     private static final String IDFieldName = "id";
@@ -71,54 +73,35 @@ public class PoiIndexService {
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setOpenMode(OpenMode.CREATE_OR_APPEND);
         indexWriter = new IndexWriter(directory, config);
+        // Delete all data in directory
+        indexWriter.deleteAll();
 
-        // Typical geospatial context
+        // Typical geo spatial context
         // These can also be constructed from SpatialContextFactory
-        ctx = SpatialContext.GEO;
+        spatialContext = SpatialContext.GEO;
+        shapeFactory = spatialContext.getShapeFactory();
         int maxLevels = 11; // results in sub-meter precision for geohash
         // This can also be constructed from SpatialPrefixTreeFactory
-        SpatialPrefixTree grid = new GeohashPrefixTree(ctx, maxLevels);
-        strategy = new RecursivePrefixTreeStrategy(grid, GeoFieldName);
+        SpatialPrefixTree grid = new GeohashPrefixTree(spatialContext, maxLevels);
+        spatialStrategy = new RecursivePrefixTreeStrategy(grid, GeoFieldName);
     }
 
     private IndexSearcher getIndexSearcher() {
         try {
-            if (ireader == null) {
-                ireader = DirectoryReader.open(directory);
+            if (directoryReader == null) {
+                directoryReader = DirectoryReader.open(directory);
             } else {
-                DirectoryReader directoryReader = DirectoryReader.openIfChanged(ireader);
+                DirectoryReader directoryReader = DirectoryReader.openIfChanged(this.directoryReader);
                 if (directoryReader != null) {
-                    ireader.close(); // 关闭原reader
-                    ireader = directoryReader; // 赋予新reader
+                    this.directoryReader.close(); // 关闭原reader
+                    this.directoryReader = directoryReader; // 赋予新reader
                 }
             }
-            return new IndexSearcher(ireader);
+            return new IndexSearcher(directoryReader);
         } catch (Exception e) {
             log.error(e.toString());
         }
         return null; // 发生异常则返回null
-    }
-
-    public boolean indexPoiData(PoiData data) {
-        try {
-            if (data != null) {
-                Document doc = new Document();
-                doc.add(new LongPoint(IDFieldName, data.getId()));
-                doc.add(new DoublePoint(LatFieldName, data.getLat()));
-                doc.add(new DoublePoint(LngFieldName, data.getLng()));
-                doc.add(new TextField(AddressFieldName, data.getAddress(), Field.Store.YES));
-                Point point = ctx.makePoint(data.getLng(), data.getLat());
-                for (Field f : strategy.createIndexableFields(point)) {
-                    doc.add(f);
-                }
-                //doc.add(new StoredField(strategy.getFieldName(), point.getX()+" "+point.getY()));
-                indexWriter.addDocument(doc);
-            }
-            return false;
-        } catch (Exception e) {
-            log.error(e.toString());
-            return false;
-        }
     }
 
     public boolean indexPoiDataList(List<PoiData> dataList) {
@@ -127,12 +110,13 @@ public class PoiIndexService {
                 List<Document> docs = new ArrayList<>();
                 for (PoiData data : dataList) {
                     Document doc = new Document();
-                    doc.add(new LongPoint(IDFieldName, data.getId()));
-                    doc.add(new DoublePoint(LatFieldName, data.getLat()));
-                    doc.add(new DoublePoint(LngFieldName, data.getLng()));
+                    doc.add(new StoredField(IDFieldName, data.getId()));
+                    doc.add(new StoredField(LatFieldName, data.getLat()));
+                    doc.add(new StoredField(LngFieldName, data.getLng()));
                     doc.add(new TextField(AddressFieldName, data.getAddress(), Field.Store.YES));
-                    Point point = ctx.makePoint(data.getLng(), data.getLat());
-                    for (Field f : strategy.createIndexableFields(point)) {
+                    Point point = shapeFactory.pointXY(data.getLng(), data.getLat());
+//                    Point point = spatialContext.makePoint(data.getLng(), data.getLat());
+                    for (Field f : spatialStrategy.createIndexableFields(point)) {
                         doc.add(f);
                     }
                     docs.add(doc);
@@ -150,14 +134,14 @@ public class PoiIndexService {
 
     private void printDocs(ScoreDoc[] scoreDocs, IndexSearcher indexSearcher) {
         if (scoreDocs != null) {
-            System.out.println("总数：" + scoreDocs.length);
+            log.info("总数：" + scoreDocs.length);
             for (int i = 0; i < scoreDocs.length; i++) {
                 try {
                     Document hitDoc = indexSearcher.doc(scoreDocs[i].doc);
-                    System.out.print(hitDoc.get(IDFieldName));
-                    System.out.print(" " + hitDoc.get(LngFieldName));
-                    System.out.print(" " + hitDoc.get(LatFieldName));
-                    System.out.println(" " + hitDoc.get(AddressFieldName));
+                    log.info(hitDoc.get(IDFieldName));
+                    log.info(hitDoc.get(LngFieldName));
+                    log.info(hitDoc.get(LatFieldName));
+                    log.info(hitDoc.get(AddressFieldName));
                 } catch (IOException e) {
                     log.error(e.toString());
                 }
@@ -165,10 +149,10 @@ public class PoiIndexService {
         }
     }
 
-    private List<PoiData> getPoiDatasFromDoc(ScoreDoc[] scoreDocs, IndexSearcher indexSearcher) {
+    private List<PoiData> getDataFromSearchResult(ScoreDoc[] scoreDocs, IndexSearcher indexSearcher) {
         List<PoiData> datas = new ArrayList<>();
         if (scoreDocs != null) {
-            //System.out.println("总数：" + scoreDocs.length);
+            log.info("总数：" + scoreDocs.length);
             for (int i = 0; i < scoreDocs.length; i++) {
                 try {
                     Document hitDoc = indexSearcher.doc(scoreDocs[i].doc);
@@ -213,16 +197,15 @@ public class PoiIndexService {
         return -1;
     }
 
-    public List<PoiData> searchPoiInRectangle(double minLng, double minLat,
-                                              double maxLng, double maxLat) {
+    public List<PoiData> searchPoiInRectangle(double minLng, double minLat, double maxLng, double maxLat) {
         List<PoiData> results = new ArrayList<>();
         IndexSearcher indexSearcher = getIndexSearcher();
         if (indexSearcher != null) {
-            Point lowerLeftPoint = ctx.makePoint(minLng, minLat);
-            Point upperRightPoint = ctx.makePoint(maxLng, maxLat);
-            Shape rect = ctx.makeRectangle(lowerLeftPoint, upperRightPoint);
+            Point lowerLeftPoint = spatialContext.makePoint(minLng, minLat);
+            Point upperRightPoint = spatialContext.makePoint(maxLng, maxLat);
+            Shape rect = spatialContext.makeRectangle(lowerLeftPoint, upperRightPoint);
             SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, rect);
-            Query query = strategy.makeQuery(args);
+            Query query = spatialStrategy.makeQuery(args);
             TopDocs docs = null;
             try {
                 docs = indexSearcher.search(query, maxResultCount);
@@ -233,7 +216,7 @@ public class PoiIndexService {
             if (docs != null) {
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 //printDocs(scoreDocs, indexSearcher);
-                results = getPoiDatasFromDoc(scoreDocs, indexSearcher);
+                results = getDataFromSearchResult(scoreDocs, indexSearcher);
             }
         }
 
@@ -244,13 +227,13 @@ public class PoiIndexService {
         List<PoiData> results = new ArrayList<>();
         IndexSearcher indexSearcher = getIndexSearcher();
         if (indexSearcher != null) {
-            Shape circle = ctx.makeCircle(lng, lat, DistanceUtils.dist2Degrees(
+            Shape circle = spatialContext.makeCircle(lng, lat, DistanceUtils.dist2Degrees(
                     radius, DistanceUtils.EARTH_MEAN_RADIUS_KM));
             SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects,
                     circle);
-            Query query = strategy.makeQuery(args);
-            Point pt = ctx.makePoint(lng, lat);
-            DoubleValuesSource valueSource = strategy.makeDistanceValueSource(pt, DistanceUtils.DEG_TO_KM);// the distance (in km)
+            Query query = spatialStrategy.makeQuery(args);
+            Point pt = spatialContext.makePoint(lng, lat);
+            DoubleValuesSource valueSource = spatialStrategy.makeDistanceValueSource(pt, DistanceUtils.DEG_TO_KM);// the distance (in km)
             Sort distSort = null;
             TopDocs docs = null;
             try {
@@ -265,22 +248,21 @@ public class PoiIndexService {
             if (docs != null) {
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 //printDocs(scoreDocs, indexSearcher);
-                results = getPoiDatasFromDoc(scoreDocs, indexSearcher);
+                results = getDataFromSearchResult(scoreDocs, indexSearcher);
             }
         }
 
         return results;
     }
 
-    public List<PoiData> searchPoiByRangeAndAddress(double lng, double lat,
-                                                    double range, String address) {
+    public List<PoiData> searchPoiByRangeAndAddress(double lng, double lat, double range, String address) {
         List<PoiData> results = new ArrayList<>();
         IndexSearcher indexSearcher = getIndexSearcher();
         if (indexSearcher != null) {
             SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects,
-                    ctx.makeCircle(lng, lat, DistanceUtils.dist2Degrees(range,
+                    spatialContext.makeCircle(lng, lat, DistanceUtils.dist2Degrees(range,
                             DistanceUtils.EARTH_MEAN_RADIUS_KM)));
-            Query geoQuery = strategy.makeQuery(args);
+            Query geoQuery = spatialStrategy.makeQuery(args);
 
             QueryBuilder builder = new QueryBuilder(analyzer);
             Query addQuery = builder.createPhraseQuery(AddressFieldName,
@@ -302,7 +284,7 @@ public class PoiIndexService {
             if (docs != null) {
                 ScoreDoc[] scoreDocs = docs.scoreDocs;
                 //printDocs(scoreDocs, indexSearcher);
-                results = getPoiDatasFromDoc(scoreDocs, indexSearcher);
+                results = getDataFromSearchResult(scoreDocs, indexSearcher);
             }
         }
         return results;
@@ -317,9 +299,9 @@ public class PoiIndexService {
             }
         }
 
-        if (ireader != null) {
+        if (directoryReader != null) {
             try {
-                ireader.close();
+                directoryReader.close();
             } catch (IOException e) {
                 log.error(e.toString());
             }

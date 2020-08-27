@@ -156,20 +156,20 @@
         <dependency>
             <groupId>org.locationtech.spatial4j</groupId>
             <artifactId>spatial4j</artifactId>
-            <version>0.6</version>
+            <version>0.7</version>
         </dependency>
 
         <!-- mmseg4j -->
-        <dependency>
-            <groupId>com.chenlb.mmseg4j</groupId>
-            <artifactId>mmseg4j-core</artifactId>
-            <version>1.10.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.chenlb.mmseg4j</groupId>
-            <artifactId>mmseg4j-solr</artifactId>
-            <version>2.3.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.chenlb.mmseg4j</groupId>-->
+<!--            <artifactId>mmseg4j-core</artifactId>-->
+<!--            <version>1.10.0</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.chenlb.mmseg4j</groupId>-->
+<!--            <artifactId>mmseg4j-solr</artifactId>-->
+<!--            <version>2.3.0</version>-->
+<!--        </dependency>-->
 
         <!-- httpclient -->
         <dependency>
