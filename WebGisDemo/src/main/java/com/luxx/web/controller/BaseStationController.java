@@ -5,21 +5,21 @@ import com.luxx.index.model.PoiData;
 import com.luxx.web.model.PoiPoint;
 import com.luxx.web.model.ResultData;
 import com.luxx.web.model.request.DataInCircleRequest;
+import com.luxx.web.model.request.DataInRectangleRequest;
 import com.luxx.web.service.BaseStationService;
-import com.luxx.index.util.JsonUtil;
-
 import com.luxx.web.service.IndexService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
-@Controller
+@RestController
+@RequestMapping("/station")
+@Api(tags = "station")
+@Slf4j
 public class BaseStationController {
     @Autowired
     private BaseStationService baseStationService;
@@ -27,43 +27,36 @@ public class BaseStationController {
     @Autowired
     private IndexService indexService;
 
-    @GetMapping("/map")
-    public String map() {
-        return "map";
-    }
-
-    @GetMapping("/supermap")
-    public String supermap() {
-        return "supermap";
-    }
-
     @GetMapping("/loadData")
+    @ApiOperation(value = "loadData", notes = "loadData")
     public ResultData loadData() {
+        List<BaseStation> baseStationList = baseStationService.getAllBaseStation();
         ResultData msg = new ResultData();
-        List<BaseStation> datas = baseStationService.getAllBaseStation();
         msg.setMsg("ok");
-        msg.setData(datas);
+        msg.setData(baseStationList);
         return msg;
     }
 
-    @GetMapping("/dataInCircle")
+    @RequestMapping(value = "/dataInCircle", method = RequestMethod.POST)
+    @ApiOperation(value = "dataInCircle", notes = "dataInCircle")
     public ResultData getDataInCircle(@RequestBody DataInCircleRequest request) {
+        log.info("Query data in circle: " + request);
         double radius = request.getRadius();
         double lat = request.getLat();
         double lng = request.getLng();
-
-        List<PoiData> datas = indexService.searchPoiInCircle(lng, lat, radius / 1000);
+        List<PoiData> dataList = indexService.searchPoiInCircle(lng, lat, radius / 1000);
         ResultData msg = new ResultData();
         msg.setMsg("ok");
-        msg.setData(datas);
+        msg.setData(dataList);
 
         return msg;
     }
 
-    @GetMapping(value = "/dataInRectangle")
-    public ResultData getDataInRectangle(Model model, HttpServletRequest request, HttpSession session) {
-        String json = request.getParameter("latlngs");
-        List<PoiPoint> points = JsonUtil.jsonToObjectList(json, ArrayList.class, PoiPoint.class);
+    @RequestMapping(value = "/dataInRectangle", method = RequestMethod.POST)
+    @ApiOperation(value = "dataInRectangle", notes = "dataInRectangle")
+    public ResultData getDataInRectangle(@RequestBody DataInRectangleRequest request) {
+        log.info("Query data in rectangle: " + request);
+        List<PoiPoint> points = request.getPoints();
         ResultData msg = new ResultData();
         if (points != null && points.size() >= 4) {
             double minLat = points.get(0).getLat();
@@ -74,23 +67,15 @@ public class BaseStationController {
             for (PoiPoint poiPoint : points) {
                 double lat = poiPoint.getLat();
                 double lng = poiPoint.getLng();
-                if (lat > maxLat) {
-                    maxLat = lat;
-                }
-                if (lat < minLat) {
-                    minLat = lat;
-                }
-                if (lng > maxLng) {
-                    maxLng = lng;
-                }
-                if (lng < minLng) {
-                    minLng = lng;
-                }
+                maxLat = Math.max(maxLat, lat);
+                minLat = Math.min(minLat, lat);
+                maxLng = Math.max(maxLng, lng);
+                minLng = Math.min(minLng, lng);
             }
 
-            List<PoiData> datas = indexService.searchPoiInRectangle(minLng, minLat, maxLng, maxLat);
+            List<PoiData> dataList = indexService.searchPoiInRectangle(minLng, minLat, maxLng, maxLat);
             msg.setMsg("ok");
-            msg.setData(datas);
+            msg.setData(dataList);
         } else {
             msg.setMsg("failed");
         }

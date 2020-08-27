@@ -1,7 +1,7 @@
 package com.luxx.web.model;
 
 public class BaseStation {
-    private long baseStationId;
+    private long id;
 
     private String countryCode;
 
@@ -27,12 +27,12 @@ public class BaseStation {
 
     }
 
-    public long getBaseStationId() {
-        return baseStationId;
+    public long getId() {
+        return id;
     }
 
-    public void setBaseStationId(long baseStationId) {
-        this.baseStationId = baseStationId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getCountryCode() {
@@ -118,7 +118,7 @@ public class BaseStation {
     @Override
     public String toString() {
         return "BaseStation{" +
-                "baseStationId=" + baseStationId +
+                "id=" + id +
                 ", countryCode='" + countryCode + '\'' +
                 ", provider='" + provider + '\'' +
                 ", lac='" + lac + '\'' +

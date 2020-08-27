@@ -1,4 +1,4 @@
-package com.luxx.web.mapper;
+package com.luxx.web.dao;
 
 import com.luxx.web.model.BaseStation;
 import org.apache.ibatis.annotations.Mapper;
