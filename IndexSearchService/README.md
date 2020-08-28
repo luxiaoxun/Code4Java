@@ -1,6 +1,7 @@
 # IndexSearchService
 1. How to use Elasticsearch.
 2. How to use Solr or Lucene to index and query data.
+3. How to use Lucene to index and query POI(GEO data). 
 
 中文详情（Chinese Details）：
 * [Elasticsearch index and query data](http://www.cnblogs.com/luxiaoxun/p/4869509.html)
