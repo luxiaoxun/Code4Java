@@ -1,11 +1,13 @@
 package com.luxx.index;
 
-import com.luxx.index.executor.PoiIndexExecutor;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
+@SpringBootConfiguration
 public class DataIndexApp {
-
     public static void main(String[] args) {
-        PoiIndexExecutor executor = new PoiIndexExecutor();
-        executor.start();
+        SpringApplication.run(DataIndexApp.class, args);
     }
 }

@@ -8,43 +8,58 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.luxx.index.config.AppConfig;
 import com.luxx.index.model.HotspotData;
 import com.luxx.index.service.MysqlIndexService;
-import com.luxx.index.util.PropertiesUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.luxx.index.util.DataSourceUtil;
+import com.luxx.index.service.IndexDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
-public class MysqlToEsExecutor {
+import javax.annotation.PostConstruct;
+
+@Component
+@ConditionalOnProperty(name = "es.cluster.address")
+public class MysqlToEsExecutor extends DataIndexExecutor {
     private static Logger log = LogManager.getLogger(MysqlToEsExecutor.class);
 
-    private MysqlIndexService indexService = new MysqlIndexService();
+    @Autowired
+    private MysqlIndexService mysqlIndexService;
+
+    @Autowired
+    private IndexDataSource indexDataSource;
+
+    @Autowired
+    private AppConfig appConfig;
 
     // 读取数据分页
     private long pageNum = 0;
     private int pageCount = 30000;
     private volatile boolean isFinished = false;
-
     private String dataTableName;
 
-    public MysqlToEsExecutor() {
-        this.dataTableName = PropertiesUtil.getInstance().getProperty("db.table");
+    @PostConstruct
+    public void init() {
+        dataTableName = appConfig.getDbTable();
     }
 
+    @Override
     public void start() {
         log.info("Start index mysql data to ES");
 
         //indexService.deleteIndex();
-        indexService.createIndex();
-        indexService.defineIndexTypeMapping();
+        mysqlIndexService.createIndex();
+        mysqlIndexService.defineIndexTypeMapping();
 
         Thread exportThread = new Thread(new Runnable() {
             public void run() {
                 while (!isFinished) {
-                    List<HotspotData> dataList = getDataFromOldDataBase();
+                    List<HotspotData> dataList = getDataFromDataBase();
                     if (dataList != null && !dataList.isEmpty()) {
-                        indexService.indexHotSpotDataList(dataList);
+                        mysqlIndexService.indexHotSpotDataList(dataList);
                         log.info(String.format("Index data complete %s pages", pageNum));
                     }
                 }
@@ -54,13 +69,13 @@ public class MysqlToEsExecutor {
         exportThread.start();
     }
 
-    private List<HotspotData> getDataFromOldDataBase() {
+    private List<HotspotData> getDataFromDataBase() {
         List<HotspotData> dataList = new ArrayList<>(pageCount);
         Connection dbConnection = null;
         Statement stm = null;
         ResultSet res = null;
         try {
-            dbConnection = DataSourceUtil.getConnection();
+            dbConnection = indexDataSource.getConnection();
             stm = dbConnection.createStatement();
             ++pageNum;
             long startNum = (pageNum - 1) * pageCount;
@@ -99,28 +114,8 @@ public class MysqlToEsExecutor {
         return dataList;
     }
 
-    private void attemptClose(ResultSet o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
-        }
+    @Override
+    public void stop() {
+        mysqlIndexService.close();
     }
-
-    private void attemptClose(Statement o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
-        }
-    }
-
-    private void attemptClose(Connection o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
-        }
-    }
-
 }

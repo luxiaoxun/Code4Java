@@ -17,7 +17,7 @@ public class IndexService implements InitializingBean, DisposableBean {
     @Override
     public void destroy() throws Exception {
         if (poiIndexService != null) {
-            poiIndexService.stop();
+            poiIndexService.close();
         }
     }
 

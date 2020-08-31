@@ -27,11 +27,17 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilde
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
+@Service
+@ConditionalOnProperty(name = "es.cluster.address")
 public class MysqlIndexService {
     private static Logger log = LogManager.getLogger(MysqlIndexService.class);
 
-    private ElasticSearchClient client = ElasticSearchClient.getInstance();
+    @Autowired
+    private ElasticSearchClient elasticSearchClient;
 
     // Index Name
     private static final String Index = "hotspot";
@@ -51,20 +57,20 @@ public class MysqlIndexService {
     private static final String DateFormat = "yyyy-MM-dd HH:mm:ss";
 
     public void close() {
-        client.close();
+        elasticSearchClient.close();
     }
 
     public void deleteIndex() {
-        client.deleteIndex(Index);
+        elasticSearchClient.deleteIndex(Index);
     }
 
     public void createIndex() {
-        client.createIndex(Index);
+        elasticSearchClient.createIndex(Index);
     }
 
     public void defineIndexTypeMapping() {
         XContentBuilder mapBuilder = prepareMappingBuilder();
-        client.defineIndexTypeMapping(Index, Type, mapBuilder);
+        elasticSearchClient.defineIndexTypeMapping(Index, Type, mapBuilder);
     }
 
     public XContentBuilder prepareMappingBuilder() {
@@ -122,12 +128,12 @@ public class MysqlIndexService {
         if (dataList != null) {
             int size = dataList.size();
             if (size > 0) {
-                BulkRequestBuilder bulkRequest = client.getBulkRequest();
+                BulkRequestBuilder bulkRequest = elasticSearchClient.getBulkRequest();
                 for (int i = 0; i < size; ++i) {
                     HotspotData data = dataList.get(i);
                     String jsonSource = getIndexDataFromHotspotData(data);
                     if (jsonSource != null) {
-                        bulkRequest.add(client.getIndexRequest(Index, Type, jsonSource));
+                        bulkRequest.add(elasticSearchClient.getIndexRequest(Index, Type, jsonSource));
                     }
                 }
 
@@ -167,7 +173,7 @@ public class MysqlIndexService {
     // Get result from startTime to endTime
     public List<Integer> getSearchResultBetweenTime(String startTime, String endTime) {
         QueryBuilder rangeBuilder = getDateRangeQueryBuilder(startTime, endTime);
-        return client.getSearchDataByScrolls(Index, Type, rangeBuilder, 1000000);
+        return elasticSearchClient.getSearchDataByScrolls(Index, Type, rangeBuilder, 1000000);
     }
 
     // Get count histogram based on date from startTime to endTime
@@ -200,7 +206,7 @@ public class MysqlIndexService {
                 break;
         }
 
-        resultsMap = client.getAggSearchResult(Index, queryBuilder, aggregation, "dateagg");
+        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, aggregation, "dateagg");
         return resultsMap;
     }
 
@@ -215,7 +221,7 @@ public class MysqlIndexService {
 
         TermsAggregationBuilder termsBuilder = AggregationBuilders.terms("DeviceIDAgg").size(Integer.MAX_VALUE)
                 .field(DeviceIDFieldName);
-        resultsMap = client.getAggSearchResult(Index, queryBuilder, termsBuilder, "DeviceIDAgg");
+        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsBuilder, "DeviceIDAgg");
         return resultsMap;
     }
 
@@ -242,7 +248,7 @@ public class MysqlIndexService {
         TermsAggregationBuilder termsBuilder = AggregationBuilders.terms("OwnFieldAgg").size(Integer.MAX_VALUE)
                 .field(OwnAreaFieldName);
 
-        resultsMap = client.getAggSearchResult(Index, queryBuilder, termsBuilder, "OwnFieldAgg");
+        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsBuilder, "OwnFieldAgg");
         return resultsMap;
     }
 
@@ -258,7 +264,7 @@ public class MysqlIndexService {
         TermsAggregationBuilder termsBuilder = AggregationBuilders.terms("TelOperFieldAgg").size(Integer.MAX_VALUE)
                 .field(TeleOperFieldName);
 
-        resultsMap = client.getAggSearchResult(Index, queryBuilder, termsBuilder, "TelOperFieldAgg");
+        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsBuilder, "TelOperFieldAgg");
         return resultsMap;
     }
 }

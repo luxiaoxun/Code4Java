@@ -26,13 +26,17 @@ import org.locationtech.spatial4j.shape.Shape;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.locationtech.spatial4j.shape.ShapeFactory;
+import org.springframework.stereotype.Service;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class PoiIndexService {
     private static Logger log = LogManager.getLogger(PoiIndexService.class);
 
@@ -59,29 +63,25 @@ public class PoiIndexService {
 
     private final int maxResultCount = 100;
 
-    public PoiIndexService() throws IOException {
-        init();
-    }
+    @PostConstruct
+    public void init() {
+        try {
+            directory = new SimpleFSDirectory(Paths.get(indexPath));
+            IndexWriterConfig config = new IndexWriterConfig(analyzer);
+            config.setOpenMode(OpenMode.CREATE_OR_APPEND);
+            indexWriter = new IndexWriter(directory, config);
 
-    public PoiIndexService(String indexPath) throws IOException {
-        this.indexPath = indexPath;
-        init();
-    }
-
-    protected void init() throws IOException {
-        directory = new SimpleFSDirectory(Paths.get(indexPath));
-        IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        config.setOpenMode(OpenMode.CREATE_OR_APPEND);
-        indexWriter = new IndexWriter(directory, config);
-
-        // Typical geo spatial context
-        // These can also be constructed from SpatialContextFactory
-        spatialContext = SpatialContext.GEO;
-        shapeFactory = spatialContext.getShapeFactory();
-        int maxLevels = 11; // results in sub-meter precision for geohash
-        // This can also be constructed from SpatialPrefixTreeFactory
-        SpatialPrefixTree grid = new GeohashPrefixTree(spatialContext, maxLevels);
-        spatialStrategy = new RecursivePrefixTreeStrategy(grid, GeoFieldName);
+            // Typical geo spatial context
+            // These can also be constructed from SpatialContextFactory
+            spatialContext = SpatialContext.GEO;
+            shapeFactory = spatialContext.getShapeFactory();
+            int maxLevels = 11; // results in sub-meter precision for geohash
+            // This can also be constructed from SpatialPrefixTreeFactory
+            SpatialPrefixTree grid = new GeohashPrefixTree(spatialContext, maxLevels);
+            spatialStrategy = new RecursivePrefixTreeStrategy(grid, GeoFieldName);
+        } catch (Exception ex) {
+            log.error("PoiIndexService init exception: " + ex.toString());
+        }
     }
 
     private IndexSearcher getIndexSearcher() {
@@ -284,7 +284,8 @@ public class PoiIndexService {
         return results;
     }
 
-    public void stop() {
+    @PreDestroy
+    public void close() {
         if (indexWriter != null) {
             try {
                 indexWriter.close();

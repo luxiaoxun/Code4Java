@@ -12,7 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <lucene.version>7.1.0</lucene.version>
+        <!-- lucene版本和ES所使用的lucene版本要一致 -->
+        <lucene.version>7.2.1</lucene.version>
         <es.version>6.2.4</es.version>
         <jackson.version>2.10.1</jackson.version>
         <log4j2.version>2.13.3</log4j2.version>
@@ -33,6 +34,19 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/lucene-analyzers-ik-1.0.jar</systemPath>
+        </dependency>
+
+        <!-- spring boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>${spring-boot.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- son-smart -->
@@ -66,11 +80,6 @@
             <version>2.6.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>transport</artifactId>
-            <version>${es.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
@@ -159,18 +168,6 @@
             <version>0.7</version>
         </dependency>
 
-        <!-- mmseg4j -->
-<!--        <dependency>-->
-<!--            <groupId>com.chenlb.mmseg4j</groupId>-->
-<!--            <artifactId>mmseg4j-core</artifactId>-->
-<!--            <version>1.10.0</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.chenlb.mmseg4j</groupId>-->
-<!--            <artifactId>mmseg4j-solr</artifactId>-->
-<!--            <version>2.3.0</version>-->
-<!--        </dependency>-->
-
         <!-- httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -200,6 +197,23 @@
                     <source>8</source>
                     <target>8</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.2.7.RELEASE</version>
+                <executions>
+                    <execution>
+<!--                        <goals>-->
+<!--                            <goal>repackage</goal>-->
+<!--                        </goals>-->
+                        <id>repackage</id>
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

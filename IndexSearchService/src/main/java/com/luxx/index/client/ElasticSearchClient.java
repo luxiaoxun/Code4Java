@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.luxx.index.util.HostAndPort;
-import com.luxx.index.util.PropertiesReader;
-
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
@@ -38,73 +35,46 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+@Component
+@Lazy
+@ConditionalOnProperty(name = "es.cluster.address")
 public class ElasticSearchClient {
     private static Logger log = LogManager.getLogger(ElasticSearchClient.class);
+
+    @Value("${es.cluster.address}")
+    private String esAddress;
+
+    @Value("${es.cluster.name}")
+    private String esName;
 
     // ES Client
     private TransportClient client;
 
-    private static class ElasticSearchClientHolder {
-        static final ElasticSearchClient instance = new ElasticSearchClient();
-    }
+    @PostConstruct
+    public void init() throws UnknownHostException {
+        log.info("es.cluster.name: " + esName);
+        log.info("es.cluster.address: " + esAddress);
 
-    public static ElasticSearchClient getInstance() {
-        return ElasticSearchClientHolder.instance;
-    }
-
-    private ElasticSearchClient() {
-        PropertiesReader reader = new PropertiesReader("/config.properties");
-        String address = reader.getProperty("es.server.address");
-        List<HostAndPort> hostAndPortList = parseHosts(address);
-        try {
-            if (hostAndPortList != null) {
-                for (HostAndPort hostAndPort : hostAndPortList) {
-                    client = new PreBuiltTransportClient(Settings.EMPTY).addTransportAddress(
-                            new TransportAddress(InetAddress.getByName(hostAndPort.getHost()),
-                                    hostAndPort.getPort()));
-                }
-            } else {
-                log.error("No elasticsearch address found in config file.");
-            }
-        } catch (UnknownHostException e) {
-            log.error(e.getMessage());
+        Settings settings = Settings.builder()
+                .put("cluster.name", esName)
+                .put("client.transport.sniff", false).build();
+        client = new PreBuiltTransportClient(settings);
+        for (String address : esAddress.split(",")) {
+            String[] hostPort = address.split(":");
+            client.addTransportAddress(new TransportAddress(InetAddress.getByName(hostPort[0]),
+                    Integer.parseInt(hostPort[1])));
         }
     }
 
-    private List<HostAndPort> parseHosts(String envHosts) {
-        if (envHosts != null && envHosts.length() > 0) {
-            String[] hostDefs = envHosts.split(",");
-            if (hostDefs != null && hostDefs.length >= 1) {
-                List<HostAndPort> envHostsAndPorts = new ArrayList<HostAndPort>(hostDefs.length);
-                for (String hostDef : hostDefs) {
-                    String[] hostAndPortParts = HostAndPort.extractParts(hostDef);
-                    if (hostAndPortParts != null && hostAndPortParts.length == 2) {
-                        String host = hostAndPortParts[0];
-                        int port = 9300;
-                        try {
-                            port = Integer.parseInt(hostAndPortParts[1]);
-                        } catch (final NumberFormatException nfe) {
-                            log.warn("Parse elasticsearch port error. Using default 9300.");
-                        }
-                        envHostsAndPorts.add(new HostAndPort(host, port));
-                    }
-                }
-                return envHostsAndPorts;
-            }
-        }
-        return null;
-    }
-
-    public ElasticSearchClient(String ipAddress, int port) {
-        try {
-            client = new PreBuiltTransportClient(Settings.EMPTY)
-                    .addTransportAddress(new TransportAddress(InetAddress.getByName(ipAddress), port));
-        } catch (UnknownHostException e) {
-            log.error(e.getMessage());
-        }
-    }
-
+    @PreDestroy
     public void close() {
         if (client != null) {
             client.close();

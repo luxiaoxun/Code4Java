@@ -7,29 +7,44 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.luxx.index.config.AppConfig;
 import com.luxx.index.model.EndpointData;
 import com.luxx.index.service.RedshiftIndexService;
-import com.luxx.index.util.DataSourceUtil;
-import com.luxx.index.util.PropertiesUtil;
+import com.luxx.index.service.IndexDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
-public class RedshiftToEsExecutor {
+import javax.annotation.PostConstruct;
+
+@Component
+@ConditionalOnProperty(name = "es.cluster.address")
+public class RedshiftToEsExecutor extends DataIndexExecutor {
     private static Logger log = LogManager.getLogger(RedshiftToEsExecutor.class);
 
-    private RedshiftIndexService indexService = new RedshiftIndexService();
+    @Autowired
+    private RedshiftIndexService indexService;
+
+    @Autowired
+    private IndexDataSource indexDataSource;
+
+    @Autowired
+    private AppConfig appConfig;
 
     // 读取数据分页
     private long pageNum = 1;
     private int pageCount = 30000;
-    private boolean isFinished = false;
-
+    private volatile boolean isFinished = false;
     private String dataTableName;
 
-    public RedshiftToEsExecutor() {
-        this.dataTableName = PropertiesUtil.getInstance().getProperty("db.table");
+    @PostConstruct
+    public void init() {
+        dataTableName = appConfig.getDbTable();
     }
 
+    @Override
     public void start() {
         // log.info("Delete old index");
         //indexService.deleteIndex();
@@ -44,7 +59,7 @@ public class RedshiftToEsExecutor {
         Thread exportThread = new Thread(new Runnable() {
             public void run() {
                 while (!isFinished) {
-                    List<EndpointData> dataList = getDataFromOldDataBase();
+                    List<EndpointData> dataList = getDataFromDataBase();
                     if (dataList != null && !dataList.isEmpty()) {
                         indexService.indexHotSpotDataListForRedshift(dataList);
                         log.info(String.format("Index data complete %s pages", pageNum));
@@ -56,13 +71,13 @@ public class RedshiftToEsExecutor {
         exportThread.start();
     }
 
-    private List<EndpointData> getDataFromOldDataBase() {
+    private List<EndpointData> getDataFromDataBase() {
         List<EndpointData> dataList = new ArrayList<EndpointData>(pageCount);
         Connection dbConnection = null;
         Statement stm = null;
         ResultSet res = null;
         try {
-            dbConnection = DataSourceUtil.getConnection();
+            dbConnection = indexDataSource.getConnection();
             stm = dbConnection.createStatement();
             ++pageNum;
             long startNum = (pageNum - 1) * pageCount;
@@ -105,28 +120,8 @@ public class RedshiftToEsExecutor {
         return dataList;
     }
 
-    private void attemptClose(ResultSet o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
-        }
+    @Override
+    public void stop() {
+        indexService.close();
     }
-
-    private void attemptClose(Statement o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
-        }
-    }
-
-    private void attemptClose(Connection o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
-        }
-    }
-
 }

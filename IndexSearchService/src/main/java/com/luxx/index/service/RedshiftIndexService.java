@@ -20,12 +20,17 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.BucketOrder;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Service;
 
-
+@Service
+@ConditionalOnProperty(name = "es.cluster.address")
 public class RedshiftIndexService {
     private static Logger log = LogManager.getLogger(RedshiftIndexService.class);
 
-    private ElasticSearchClient client = ElasticSearchClient.getInstance();
+    @Autowired
+    private ElasticSearchClient elasticSearchClient;
 
     // Index Name
     private static final String Index = "endpoint";
@@ -35,20 +40,20 @@ public class RedshiftIndexService {
     private static final String DateFormat = "yyyy-MM-dd HH:mm:ss";
 
     public void close() {
-        client.close();
+        elasticSearchClient.close();
     }
 
     public void deleteIndex() {
-        client.deleteIndex(Index);
+        elasticSearchClient.deleteIndex(Index);
     }
 
     public void createIndex() {
-        client.createIndex(Index);
+        elasticSearchClient.createIndex(Index);
     }
 
     public void defineIndexTypeMapping() {
         XContentBuilder mapBuilder = prepareMappingBuilder();
-        client.defineIndexTypeMapping(Index, Type, mapBuilder);
+        elasticSearchClient.defineIndexTypeMapping(Index, Type, mapBuilder);
     }
 
     public XContentBuilder prepareMappingBuilder() {
@@ -100,12 +105,12 @@ public class RedshiftIndexService {
         if (dataList != null) {
             int size = dataList.size();
             if (size > 0) {
-                BulkRequestBuilder bulkRequest = client.getBulkRequest();
+                BulkRequestBuilder bulkRequest = elasticSearchClient.getBulkRequest();
                 for (int i = 0; i < size; ++i) {
                     EndpointData data = dataList.get(i);
                     String jsonSource = getIndexDataFromHotspotDataForRedshift(data);
                     if (jsonSource != null) {
-                        bulkRequest.add(client.getIndexRequest(Index, Type, jsonSource));
+                        bulkRequest.add(elasticSearchClient.getIndexRequest(Index, Type, jsonSource));
                     }
                 }
 
@@ -147,7 +152,7 @@ public class RedshiftIndexService {
         termsBuilder.subAggregation(AggregationBuilders.sum("sum_usage").field("ds_bytes"));
         termsBuilder.order(BucketOrder.aggregation("sum_usage", false));
 
-        resultsMap = client.getSumAggSearchOrderResult(Index, queryBuilder, termsBuilder, "endpointUsageAgg", "sum_usage");
+        resultsMap = elasticSearchClient.getSumAggSearchOrderResult(Index, queryBuilder, termsBuilder, "endpointUsageAgg", "sum_usage");
 
         return resultsMap;
     }
@@ -165,7 +170,7 @@ public class RedshiftIndexService {
         TermsAggregationBuilder termsBuilder = AggregationBuilders.terms("endpointMaxAgg").field("endpoint_id").size(Integer.MAX_VALUE);
         termsBuilder.subAggregation(AggregationBuilders.max("max_bps").field("ds_max_bps"));
 
-        resultsMap = client.getMaxAggSearchOrderResult(Index, queryBuilder, termsBuilder, "endpointMaxAgg", "max_bps");
+        resultsMap = elasticSearchClient.getMaxAggSearchOrderResult(Index, queryBuilder, termsBuilder, "endpointMaxAgg", "max_bps");
 
         return resultsMap;
     }

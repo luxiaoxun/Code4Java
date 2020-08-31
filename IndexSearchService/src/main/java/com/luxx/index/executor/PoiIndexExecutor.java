@@ -1,11 +1,10 @@
 package com.luxx.index.executor;
 
+import com.luxx.index.config.AppConfig;
 import com.luxx.index.model.PoiData;
 import com.luxx.index.service.PoiIndexService;
-import com.luxx.index.util.DataSourceUtil;
-import com.luxx.index.util.PropertiesUtil;
+import com.luxx.index.service.IndexDataSource;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,39 +14,51 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class PoiIndexExecutor {
+import javax.annotation.PostConstruct;
+
+@Component
+public class PoiIndexExecutor extends DataIndexExecutor {
     private static Logger log = LogManager.getLogger(PoiIndexExecutor.class);
 
-    private PoiIndexService indexService;
+    @Autowired
+    private PoiIndexService poiIndexService;
+
+    @Autowired
+    private IndexDataSource indexDataSource;
+
+    @Autowired
+    private AppConfig appConfig;
 
     // 读取数据分页
     private long pageNum = 0;
     private int pageCount = 1000;
-
     private String dataTableName;
 
-    public PoiIndexExecutor() {
-        this.dataTableName = PropertiesUtil.getInstance().getProperty("db.table");
+    @PostConstruct
+    public void init() {
+        dataTableName = appConfig.getDbTable();
     }
 
+    @Override
     public void start() {
         log.info("Start index POI");
         try {
-            indexService = new PoiIndexService();
-            indexService.clear();
+            poiIndexService.clear();
 
             Thread exportThread = new Thread(new Runnable() {
                 public void run() {
                     boolean isRunning = true;
                     while (isRunning) {
-                        List<PoiData> dataList = getDataFromOldDataBase();
+                        List<PoiData> dataList = getDataFromDataBase();
                         if (dataList == null || dataList.isEmpty()) {
                             log.info("Index POI finished");
                             break;
                         }
                         int len = dataList.size();
-                        indexService.indexPoiDataList(dataList);
+                        poiIndexService.indexPoiDataList(dataList);
                         log.info("Index POI max id：" + dataList.get(len - 1).getId());
                     }
                 }
@@ -58,13 +69,13 @@ public class PoiIndexExecutor {
         }
     }
 
-    private List<PoiData> getDataFromOldDataBase() {
+    private List<PoiData> getDataFromDataBase() {
         List<PoiData> dataList = new ArrayList<>(pageCount);
         Connection dbConnection = null;
         Statement stm = null;
         ResultSet res = null;
         try {
-            dbConnection = DataSourceUtil.getConnection();
+            dbConnection = indexDataSource.getConnection();
             if (dbConnection != null) {
                 stm = dbConnection.createStatement();
                 ++pageNum;
@@ -98,28 +109,11 @@ public class PoiIndexExecutor {
         return dataList;
     }
 
-    private void attemptClose(ResultSet o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
+
+    @Override
+    public void stop() {
+        if (poiIndexService != null) {
+            poiIndexService.close();
         }
     }
-
-    private void attemptClose(Statement o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
-        }
-    }
-
-    private void attemptClose(Connection o) {
-        try {
-            if (o != null)
-                o.close();
-        } catch (Exception e) {
-        }
-    }
-
 }

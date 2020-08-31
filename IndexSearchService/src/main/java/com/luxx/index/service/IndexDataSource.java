@@ -1,27 +1,32 @@
-package com.luxx.index.util;
+package com.luxx.index.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import com.luxx.index.config.AppConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class DataSourceUtil {
+import javax.annotation.PostConstruct;
 
+@Service
+public class IndexDataSource {
     private static final Long HIKARI_MAX_LIFE_TIME_MS = 1800000L; // 30 min
     private static final Long HIKARI_LEAK_DETECTION_THRESHOLD_MS = 60000L;
     private static final int HIKARI_POOL_SIZE = 5;
-
     private static HikariDataSource dataSource = null;
 
-    private DataSourceUtil() {
-    }
+    @Autowired
+    private AppConfig appConfig;
 
-    static {
-        String dbUrl = PropertiesUtil.getInstance().getProperty("db.url");
-        String username = PropertiesUtil.getInstance().getProperty("db.username");
-        String password = PropertiesUtil.getInstance().getProperty("db.password");
-        String dbType = PropertiesUtil.getInstance().getProperty("db.type");
+    @PostConstruct
+    public void init() {
+        String dbUrl = appConfig.getDbUrl();
+        String username = appConfig.getDbUserName();
+        String password = appConfig.getDbPassword();
+        String dbType = appConfig.getDbType();
 
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(dbUrl);
@@ -43,7 +48,7 @@ public class DataSourceUtil {
         dataSource = new HikariDataSource(config);
     }
 
-    public static Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         if (dataSource != null) {
             return dataSource.getConnection();
         } else {
