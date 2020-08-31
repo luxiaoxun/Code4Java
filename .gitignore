@@ -13,6 +13,7 @@ output/
 
 ### log ###
 logs/
+log/
 *.log
 
 *.iws
@@ -32,7 +33,6 @@ logs/
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-
 ### Maven ###
 target/
 pom.xml.tag
@@ -43,7 +43,6 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
-
 
 ### Windows ###
 # Windows image file caches
@@ -65,7 +64,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-
 ### OSX ###
 *~
 .DS_Store
@@ -74,7 +72,6 @@ $RECYCLE.BIN/
 
 # Icon must end with two \r
 Icon
-
 
 # Thumbnails
 ._*
@@ -93,7 +90,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
 
 ### Commitizen ###
 node_modules/
