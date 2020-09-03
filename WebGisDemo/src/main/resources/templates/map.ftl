@@ -27,7 +27,7 @@
     <script src="${request.contextPath}/static/js/leafletjs/leaflet-search.js"></script>
 
     <script src="${request.contextPath}/static/js/socket.io/socket.io.js"></script>
-    <script src="${request.contextPath}/static/js/jquery-1.7.2.min.js"></script>
+    <script src="${request.contextPath}/static/js/jquery-1.11.3.min.js"></script>
 
     <script src="${request.contextPath}/static/js/leafletjs/leaflet.draw.cn.js"></script>
     <script src="${request.contextPath}/static/js/leafletjs/leaflet.map.js"></script>

@@ -24,6 +24,7 @@ public class IndexService implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         poiIndexService = new PoiIndexService();
+        poiIndexService.init();
     }
 
     public List<PoiData> searchPoiInCircle(double lng, double lat, double radius) {
