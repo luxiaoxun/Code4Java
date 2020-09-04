@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.luxx.index.config.AppConfig;
+import com.luxx.index.config.IndexConfig;
 import com.luxx.index.model.EndpointData;
 import com.luxx.index.service.RedshiftIndexService;
 import com.luxx.index.service.IndexDataSource;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-@ConditionalOnProperty(name = "es.cluster.address")
+@ConditionalOnProperty(name = "index.es.cluster.address")
 public class RedshiftToEsExecutor extends DataIndexExecutor {
     private static Logger log = LogManager.getLogger(RedshiftToEsExecutor.class);
 
@@ -31,7 +31,7 @@ public class RedshiftToEsExecutor extends DataIndexExecutor {
     private IndexDataSource indexDataSource;
 
     @Autowired
-    private AppConfig appConfig;
+    private IndexConfig indexConfig;
 
     // 读取数据分页
     private long pageNum = 1;
@@ -41,7 +41,7 @@ public class RedshiftToEsExecutor extends DataIndexExecutor {
 
     @PostConstruct
     public void init() {
-        dataTableName = appConfig.getDbTable();
+        dataTableName = indexConfig.getDbTable();
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.luxx.index.config.AppConfig;
+import com.luxx.index.config.IndexConfig;
 import com.luxx.index.model.HotspotData;
 import com.luxx.index.service.MysqlIndexService;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-@ConditionalOnProperty(name = "es.cluster.address")
+@ConditionalOnProperty(name = "index.es.cluster.address")
 public class MysqlToEsExecutor extends DataIndexExecutor {
     private static Logger log = LogManager.getLogger(MysqlToEsExecutor.class);
 
@@ -33,7 +33,7 @@ public class MysqlToEsExecutor extends DataIndexExecutor {
     private IndexDataSource indexDataSource;
 
     @Autowired
-    private AppConfig appConfig;
+    private IndexConfig indexConfig;
 
     // 读取数据分页
     private long pageNum = 0;
@@ -43,7 +43,7 @@ public class MysqlToEsExecutor extends DataIndexExecutor {
 
     @PostConstruct
     public void init() {
-        dataTableName = appConfig.getDbTable();
+        dataTableName = indexConfig.getDbTable();
     }
 
     @Override

@@ -1,24 +1,26 @@
 package com.luxx.index.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AppConfig {
+@ConditionalOnProperty(prefix = "index.db", name = "url")
+public class IndexConfig {
 
-    @Value("${db.url}")
+    @Value("${index.db.url}")
     private String dbUrl;
 
-    @Value("${db.username}")
+    @Value("${index.db.username}")
     private String dbUserName;
 
-    @Value("${db.password}")
+    @Value("${index.db.password}")
     private String dbPassword;
 
-    @Value("${db.table}")
+    @Value("${index.db.table}")
     private String dbTable;
 
-    @Value("${db.type}")
+    @Value("${index.db.type}")
     private String dbType;
 
     public String getDbUrl() {

@@ -25,7 +25,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service
-@ConditionalOnProperty(name = "es.cluster.address")
+@ConditionalOnProperty(name = "index.es.cluster.address")
 public class RedshiftIndexService {
     private static Logger log = LogManager.getLogger(RedshiftIndexService.class);
 

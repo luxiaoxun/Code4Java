@@ -45,14 +45,14 @@ import javax.annotation.PreDestroy;
 
 @Component
 @Lazy
-@ConditionalOnProperty(name = "es.cluster.address")
+@ConditionalOnProperty(name = "index.es.cluster.address")
 public class ElasticSearchClient {
     private static Logger log = LogManager.getLogger(ElasticSearchClient.class);
 
-    @Value("${es.cluster.address}")
+    @Value("${index.es.cluster.address}")
     private String esAddress;
 
-    @Value("${es.cluster.name}")
+    @Value("${index.es.cluster.name}")
     private String esName;
 
     // ES Client

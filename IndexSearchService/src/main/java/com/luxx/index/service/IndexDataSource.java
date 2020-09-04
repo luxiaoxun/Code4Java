@@ -3,15 +3,17 @@ package com.luxx.index.service;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import com.luxx.index.config.AppConfig;
+import com.luxx.index.config.IndexConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
 @Service
+@ConditionalOnProperty(name = "index.db.url")
 public class IndexDataSource {
     private static final Long HIKARI_MAX_LIFE_TIME_MS = 1800000L; // 30 min
     private static final Long HIKARI_LEAK_DETECTION_THRESHOLD_MS = 60000L;
@@ -19,14 +21,14 @@ public class IndexDataSource {
     private static HikariDataSource dataSource = null;
 
     @Autowired
-    private AppConfig appConfig;
+    private IndexConfig indexConfig;
 
     @PostConstruct
     public void init() {
-        String dbUrl = appConfig.getDbUrl();
-        String username = appConfig.getDbUserName();
-        String password = appConfig.getDbPassword();
-        String dbType = appConfig.getDbType();
+        String dbUrl = indexConfig.getDbUrl();
+        String username = indexConfig.getDbUserName();
+        String password = indexConfig.getDbPassword();
+        String dbType = indexConfig.getDbType();
 
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(dbUrl);

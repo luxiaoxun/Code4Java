@@ -4,6 +4,7 @@ import com.luxx.index.model.PoiData;
 import com.luxx.index.service.PoiIndexService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Service
 @Lazy
 public class IndexService implements InitializingBean, DisposableBean {
+    @Autowired
     private PoiIndexService poiIndexService;
 
     @Override
@@ -23,8 +25,6 @@ public class IndexService implements InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        poiIndexService = new PoiIndexService();
-        poiIndexService.init();
     }
 
     public List<PoiData> searchPoiInCircle(double lng, double lat, double radius) {

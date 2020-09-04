@@ -1,6 +1,6 @@
 package com.luxx.index.executor;
 
-import com.luxx.index.config.AppConfig;
+import com.luxx.index.config.IndexConfig;
 import com.luxx.index.model.PoiData;
 import com.luxx.index.service.PoiIndexService;
 import com.luxx.index.service.IndexDataSource;
@@ -15,11 +15,13 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 @Component
+@ConditionalOnProperty(name = "index.db.url")
 public class PoiIndexExecutor extends DataIndexExecutor {
     private static Logger log = LogManager.getLogger(PoiIndexExecutor.class);
 
@@ -30,7 +32,7 @@ public class PoiIndexExecutor extends DataIndexExecutor {
     private IndexDataSource indexDataSource;
 
     @Autowired
-    private AppConfig appConfig;
+    private IndexConfig indexConfig;
 
     // 读取数据分页
     private long pageNum = 0;
@@ -39,7 +41,7 @@ public class PoiIndexExecutor extends DataIndexExecutor {
 
     @PostConstruct
     public void init() {
-        dataTableName = appConfig.getDbTable();
+        dataTableName = indexConfig.getDbTable();
     }
 
     @Override
