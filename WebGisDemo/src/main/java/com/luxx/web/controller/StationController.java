@@ -1,5 +1,7 @@
 package com.luxx.web.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.luxx.web.model.Station;
 import com.luxx.index.model.PoiData;
 import com.luxx.web.model.PoiPoint;
@@ -29,11 +31,13 @@ public class StationController {
 
     @GetMapping("/loadData")
     @ApiOperation(value = "loadData", notes = "loadData")
-    public ResultData loadData() {
-        List<Station> stationList = stationService.getAllBaseStation();
+    public ResultData loadData(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Station> stationList = stationService.getStation();
+        PageInfo<Station> pageInfo = new PageInfo<>(stationList);
         ResultData msg = new ResultData();
         msg.setMsg("ok");
-        msg.setData(stationList);
+        msg.setData(pageInfo);
         return msg;
     }
 

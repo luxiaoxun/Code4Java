@@ -12,7 +12,21 @@ public class StationService {
     @Autowired
     private StationMapper stationMapper;
 
-    public List<Station> getAllBaseStation() {
-        return stationMapper.getAllStation();
+    public List<Station> getStation() {
+        return stationMapper.getStation();
     }
+
+    public int insert(Station station){
+        return stationMapper.insert(station);
+    }
+
+    public int update(Station station){
+        return stationMapper.update(station);
+    }
+
+    public int delete(int id){
+        return stationMapper.delete(id);
+    }
+
+
 }

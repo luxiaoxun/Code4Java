@@ -24,7 +24,7 @@
                 address
     </sql>
 
-    <select id="getAllStation" resultMap="stationResultMap">
+    <select id="getStation" resultMap="stationResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM station
@@ -99,18 +99,6 @@
         </set>
         WHERE id = #{id}
     </update>
-
-    <select id="pageListCount" resultType="java.lang.Integer">
-        SELECT count(1)
-        FROM station
-    </select>
-
-    <select id="pageList" resultMap="stationResultMap">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM station
-        LIMIT #{offset}, #{pageSize}
-    </select>
 
 </mapper>
 
