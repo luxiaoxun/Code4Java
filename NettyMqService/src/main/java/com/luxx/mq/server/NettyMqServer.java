@@ -53,20 +53,6 @@ public class NettyMqServer {
     }
 
     private void startMqListener() {
-        // Not familiar with Spring AMQP, don't know how to Manually ack to the
-        // MQ server if one message is consumed.
-        // Problem: If ack-mode is Automatic, The message will be lost if you
-        // want some control
-        /*
-         * @SuppressWarnings("resource") ApplicationContext applicationContext =
-         * new FileSystemXmlApplicationContext( "classpath:spring-config.xml");
-         * MqListener mqListener = (MqListener)
-         * applicationContext.getBean("messageListener");
-         */
-
-        // Another way to start a MQ listener, just use the rabbit mq java
-        // client API
-        // Manually ack to MQ server if one message is consumed.
         MqReceiver mqReceiver = new MqReceiver();
         mqReceiver.start();
     }
