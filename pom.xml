@@ -14,6 +14,7 @@
         <module>NettyMqService</module>
         <module>WebGisDemo</module>
         <module>DataIndexApp</module>
+        <module>LogCollector</module>
     </modules>
 
     <properties>

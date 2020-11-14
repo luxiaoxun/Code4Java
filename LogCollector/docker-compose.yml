@@ -1,0 +1,19 @@
+version: '1'
+services:
+  log-collector:
+    image: log-collector
+    build: ./
+    environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8899
+      - LOG_LEVEL=info
+      - ENV=dev
+      - ES_HOST=10.10.10.10
+      - ES_PORT=9200
+      - ES_USERNAME=username
+      - ES_PASSWORD=password
+      - ES_INDEX=my_index
+      - KAFKA_URL=10.10.10.20:9092
+      - KAFKA_TOPIC=my_topic
+    ports:
+      - "9899:8899"
+      - "9090:8080"
