@@ -73,13 +73,15 @@ public class LogIndexExecutor extends DataIndexExecutor {
                                     String data = record.value();
                                     if (JsonUtil.isValidJson(data)) {
                                         JsonNode json = JsonUtil.decode(data, JsonNode.class);
-                                        String msg = json.get("message").asText();
-                                        JsonNode msgNode = JsonUtil.decode(msg, JsonNode.class);
-                                        ObjectNode objectNode = (ObjectNode) json;
-                                        objectNode.replace("message", msgNode);
-                                        String timestamp = DateTimeUtil.getEsString(DateTime.now().getMillis());
-                                        objectNode.put("@timestamp", timestamp);
-                                        logList.add(objectNode.toString());
+                                        if (json.has("message")) {
+                                            String msg = json.get("message").asText();
+                                            JsonNode msgNode = JsonUtil.decode(msg, JsonNode.class);
+                                            ObjectNode objectNode = (ObjectNode) json;
+                                            objectNode.replace("message", msgNode);
+                                            String timestamp = DateTimeUtil.getEsString(DateTime.now().getMillis());
+                                            objectNode.put("@timestamp", timestamp);
+                                            logList.add(objectNode.toString());
+                                        }
                                     } else {
                                         ObjectNode objectNode = JsonUtil.createObjectNode();
                                         String timestamp = DateTimeUtil.getEsString(DateTime.now().getMillis());
