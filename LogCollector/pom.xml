@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>com.luxx</groupId>
-    <artifactId>log-collector</artifactId>
+    <artifactId>LogCollector</artifactId>
     <version>1.0</version>
     <name>log-collector</name>
 
