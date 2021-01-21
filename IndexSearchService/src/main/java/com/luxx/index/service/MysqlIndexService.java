@@ -185,28 +185,28 @@ public class MysqlIndexService {
         QueryBuilder rangeBuilder = getDateRangeQueryBuilder(startTime, endTime);
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(deviceQueryBuilder).must(rangeBuilder);
 
-        DateHistogramAggregationBuilder aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+        DateHistogramAggregationBuilder dateHistogramAggBuilder = AggregationBuilders.dateHistogram("dateAgg").field(TimeFieldName)
                 .dateHistogramInterval(DateHistogramInterval.YEAR);
         switch (gap) {
             case "Quarter":
-                aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+                dateHistogramAggBuilder = AggregationBuilders.dateHistogram("dateAgg").field(TimeFieldName)
                         .dateHistogramInterval(DateHistogramInterval.QUARTER);
                 break;
             case "Month":
-                aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+                dateHistogramAggBuilder = AggregationBuilders.dateHistogram("dateAgg").field(TimeFieldName)
                         .dateHistogramInterval(DateHistogramInterval.MONTH);
                 break;
             case "Week":
-                aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+                dateHistogramAggBuilder = AggregationBuilders.dateHistogram("dateAgg").field(TimeFieldName)
                         .dateHistogramInterval(DateHistogramInterval.WEEK);
                 break;
             case "Day":
-                aggregation = AggregationBuilders.dateHistogram("dateagg").field(TimeFieldName)
+                dateHistogramAggBuilder = AggregationBuilders.dateHistogram("dateAgg").field(TimeFieldName)
                         .dateHistogramInterval(DateHistogramInterval.DAY);
                 break;
         }
 
-        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, aggregation, "dateagg");
+        resultsMap = elasticSearchClient.getDateHistogramAggSearchResult(Index, queryBuilder, dateHistogramAggBuilder, "dateAgg");
         return resultsMap;
     }
 
@@ -219,9 +219,9 @@ public class MysqlIndexService {
         QueryBuilder rangeBuilder = getDateRangeQueryBuilder(startTime, endTime);
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(deviceQueryBuilder).must(rangeBuilder);
 
-        TermsAggregationBuilder termsBuilder = AggregationBuilders.terms("DeviceIDAgg").size(Integer.MAX_VALUE)
+        TermsAggregationBuilder termsAggBuilder = AggregationBuilders.terms("DeviceIDAgg").size(Integer.MAX_VALUE)
                 .field(DeviceIDFieldName);
-        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsBuilder, "DeviceIDAgg");
+        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsAggBuilder, "DeviceIDAgg");
         return resultsMap;
     }
 
@@ -245,10 +245,10 @@ public class MysqlIndexService {
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(deviceQueryBuilder).must(rangeBuilder)
                 .must(areaFieldQueryBuilder);
 
-        TermsAggregationBuilder termsBuilder = AggregationBuilders.terms("OwnFieldAgg").size(Integer.MAX_VALUE)
+        TermsAggregationBuilder termsAggBuilder = AggregationBuilders.terms("OwnFieldAgg").size(Integer.MAX_VALUE)
                 .field(OwnAreaFieldName);
 
-        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsBuilder, "OwnFieldAgg");
+        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsAggBuilder, "OwnFieldAgg");
         return resultsMap;
     }
 
@@ -261,10 +261,10 @@ public class MysqlIndexService {
 
         QueryBuilder queryBuilder = QueryBuilders.boolQuery().must(deviceQueryBuilder).must(rangeBuilder);
 
-        TermsAggregationBuilder termsBuilder = AggregationBuilders.terms("TelOperFieldAgg").size(Integer.MAX_VALUE)
+        TermsAggregationBuilder termsAggBuilder = AggregationBuilders.terms("TelOperFieldAgg").size(Integer.MAX_VALUE)
                 .field(TeleOperFieldName);
 
-        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsBuilder, "TelOperFieldAgg");
+        resultsMap = elasticSearchClient.getAggSearchResult(Index, queryBuilder, termsAggBuilder, "TelOperFieldAgg");
         return resultsMap;
     }
 }

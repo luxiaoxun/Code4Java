@@ -28,6 +28,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.histogram.Histogram;
+import org.elasticsearch.search.aggregations.bucket.histogram.ParsedDateHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.metrics.max.Max;
 import org.elasticsearch.search.aggregations.metrics.sum.Sum;
@@ -178,7 +181,7 @@ public class ElasticSearchClient {
         return ids;
     }
 
-    // Get results of aggregation
+    // Get results from aggregation
     public Map<String, String> getAggSearchResult(String index, QueryBuilder queryBuilder,
                                                   AggregationBuilder aggregationBuilder, String aggName) {
         Map<String, String> resultsMap = new HashMap<>();
@@ -187,6 +190,22 @@ public class ElasticSearchClient {
         Terms terms = searchResponse.getAggregations().get(aggName);
         if (terms != null) {
             for (Terms.Bucket entry : terms.getBuckets()) {
+                resultsMap.put(entry.getKey().toString(), String.valueOf(entry.getDocCount()));
+            }
+        }
+
+        return resultsMap;
+    }
+
+    // Get results from date histogram aggregation
+    public Map<String, String> getDateHistogramAggSearchResult(String index, QueryBuilder queryBuilder,
+                                                               DateHistogramAggregationBuilder aggregationBuilder, String aggName) {
+        Map<String, String> resultsMap = new HashMap<>();
+        SearchResponse searchResponse = client.prepareSearch(index).setQuery(queryBuilder)
+                .addAggregation(aggregationBuilder).execute().actionGet();
+        ParsedDateHistogram dateHistogram = searchResponse.getAggregations().get(aggName);
+        if (dateHistogram != null) {
+            for (Histogram.Bucket entry : dateHistogram.getBuckets()) {
                 resultsMap.put(entry.getKey().toString(), String.valueOf(entry.getDocCount()));
             }
         }

@@ -23,6 +23,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilde
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @ConditionalOnProperty(name = "index.es.cluster.address")
@@ -38,6 +39,8 @@ public class RedshiftIndexService {
     private static final String Type = "endpointdata";
 
     private static final String DateFormat = "yyyy-MM-dd HH:mm:ss";
+
+    private static final String TimeField = "date_time";
 
     public void close() {
         elasticSearchClient.close();
@@ -70,7 +73,7 @@ public class RedshiftIndexService {
                     .field("type", "long").field("include_in_all", "false").endObject().startObject("us_max_bps")
                     .field("type", "double").field("include_in_all", "false").endObject().startObject("us_avg_bps")
                     .field("type", "double").field("include_in_all", "false").endObject().startObject("us_mwt")
-                    .field("type", "integer").field("include_in_all", "false").endObject().startObject("date_time")
+                    .field("type", "integer").field("include_in_all", "false").endObject().startObject(TimeField)
                     .field("type", "date").field("include_in_all", "false").field("format", DateFormat).endObject().endObject()
                     .endObject().endObject();
         } catch (IOException e) {
@@ -90,7 +93,7 @@ public class RedshiftIndexService {
                         .field("ds_avg_bps", data.getDs_avg_bytes()).field("ds_mwt", data.getDs_mwt())
                         .field("us_bytes", data.getUs_bytes()).field("us_max_bps", data.getUs_max_bytes())
                         .field("us_avg_bps", data.getUs_avg_bytes()).field("us_mwt", data.getUs_mwt())
-                        .field("date_time", data.getDate_time()).endObject();
+                        .field(TimeField, data.getDate_time()).endObject();
                 jsonString = jsonBuilder.string();
             } catch (IOException e) {
                 log.error(e);
@@ -130,11 +133,9 @@ public class RedshiftIndexService {
 
     private QueryBuilder getDateRangeQueryBuilder(String startTime, String endTime) {
         QueryBuilder rangeBuilder = QueryBuilders.matchAllQuery();
-
-        if (startTime != null && endTime != null) {
-            rangeBuilder = QueryBuilders.rangeQuery("date_time").from(startTime).to(endTime).format(DateFormat);
+        if (!StringUtils.isEmpty(startTime) && !StringUtils.isEmpty(endTime)) {
+            rangeBuilder = QueryBuilders.rangeQuery(TimeField).from(startTime).to(endTime).format(DateFormat);
         }
-
         return rangeBuilder;
     }
 
