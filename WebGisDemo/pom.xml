@@ -21,7 +21,7 @@
         <jackson.version>2.12.1</jackson.version>
         <swagger.version>2.9.2</swagger.version>
         <lombok.version>1.18.0</lombok.version>
-        <guava.version>29.0-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
     </properties>
 
     <dependencies>
