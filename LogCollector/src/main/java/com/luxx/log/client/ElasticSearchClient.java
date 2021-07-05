@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -31,11 +32,8 @@ import java.util.List;
 public class ElasticSearchClient {
     private static Logger logger = LogManager.getLogger(ElasticSearchClient.class);
 
-    @Value("${es.host}")
-    private String esHost;
-
-    @Value("${es.port}")
-    private int esPort;
+    @Value("${es.address}")
+    private String esAddress;
 
     @Value("${es.username}")
     private String username;
@@ -51,11 +49,11 @@ public class ElasticSearchClient {
 
     @PostConstruct
     public void init() throws UnknownHostException {
-        logger.info("es.host: " + esHost);
-        logger.info("es.port: " + esPort);
+        logger.info("es.address: " + esAddress);
         logger.info("es.index: " + indexName);
 
-        client = new RestHighLevelClient(RestClient.builder(new HttpHost(esHost, esPort))
+        String[] hostPort = esAddress.split(":");
+        client = new RestHighLevelClient(RestClient.builder(new HttpHost(hostPort[0], Integer.parseInt(hostPort[1])))
                 .setHttpClientConfigCallback(new RestClientBuilder.HttpClientConfigCallback() {
                     @Override
                     public HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder) {
@@ -88,7 +86,7 @@ public class ElasticSearchClient {
             }
             BulkResponse bulkResponse;
             try {
-                bulkResponse = client.bulk(request);
+                bulkResponse = client.bulk(request, RequestOptions.DEFAULT);
                 if (bulkResponse.hasFailures()) {
                     logger.error(bulkResponse.buildFailureMessage());
                 }

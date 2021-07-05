@@ -7,8 +7,7 @@ services:
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8899
       - LOG_LEVEL=info
       - ENV=dev
-      - ES_HOST=10.10.10.10
-      - ES_PORT=9200
+      - ES_ADDRESS=10.10.10.10:9200
       - ES_USERNAME=username
       - ES_PASSWORD=password
       - ES_INDEX=my_index

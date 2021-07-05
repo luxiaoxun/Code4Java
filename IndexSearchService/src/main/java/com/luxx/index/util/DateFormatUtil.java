@@ -1,6 +1,5 @@
 package com.luxx.index.util;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -29,45 +28,12 @@ public class DateFormatUtil {
     }
 
     /*
-     * Convert string "yyyy-MM-dd HH:mm:ss" to date
-     */
-    public static Date StringToDate(String text) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        sdf.setTimeZone(utc);
-        Date date = null;
-        try {
-            date = sdf.parse(text);
-        } catch (ParseException e) {
-            throw e;
-        }
-
-        return date;
-    }
-
-    /*
      * Convert date to string "yyyy-MM-dd HH:mm:ss"
      */
     public static String DateToString(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(utc);
         return sdf.format(date);
-    }
-
-    /*
-     * Convert string "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" to date
-     */
-    public static Date UtcStringToDate(String text) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        sdf.setTimeZone(utc);
-
-        Date date = null;
-        try {
-            date = sdf.parse(text);
-        } catch (ParseException e) {
-            throw e;
-        }
-
-        return date;
     }
 
     /*
