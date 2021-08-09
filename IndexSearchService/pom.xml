@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- lucene版本和ES所使用的lucene版本要一致 -->
         <lucene.version>7.2.1</lucene.version>
-        <es.version>6.2.4</es.version>
+        <es.version>6.8.17</es.version>
         <jackson.version>2.12.1</jackson.version>
         <log4j2.version>2.13.3</log4j2.version>
         <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
