@@ -16,7 +16,7 @@
         <lucene.version>7.2.1</lucene.version>
         <es.version>6.2.4</es.version>
         <jackson.version>2.12.1</jackson.version>
-        <log4j2.version>2.13.3</log4j2.version>
+        <log4j2.version>2.16.0</log4j2.version>
         <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
     </properties>
 
