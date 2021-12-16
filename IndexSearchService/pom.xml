@@ -12,12 +12,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
         <!-- lucene版本和ES所使用的lucene版本要一致 -->
         <lucene.version>7.2.1</lucene.version>
         <es.version>6.2.4</es.version>
         <jackson.version>2.12.1</jackson.version>
-        <log4j2.version>2.13.3</log4j2.version>
-        <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
+        <log4j2.version>2.16.0</log4j2.version>
+        <hikaricp.version>3.4.5</hikaricp.version>
+        <mysql.version>8.0.16</mysql.version>
     </properties>
 
     <repositories>
@@ -71,13 +73,13 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.16</version>
+            <version>${mysql.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>2.6.0</version>
+            <version>${hikaricp.version}</version>
         </dependency>
 
         <dependency>
@@ -97,11 +99,6 @@
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-client-sniffer</artifactId>
-            <version>${es.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
             <version>${es.version}</version>
         </dependency>
@@ -115,11 +112,6 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>${log4j2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
             <version>${log4j2.version}</version>
         </dependency>
 
