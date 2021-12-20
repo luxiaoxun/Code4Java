@@ -17,7 +17,7 @@
         <lucene.version>7.2.1</lucene.version>
         <es.version>6.2.4</es.version>
         <jackson.version>2.12.1</jackson.version>
-        <log4j2.version>2.16.0</log4j2.version>
+        <log4j2.version>2.17.0</log4j2.version>
         <hikaricp.version>3.4.5</hikaricp.version>
         <mysql.version>8.0.16</mysql.version>
     </properties>
