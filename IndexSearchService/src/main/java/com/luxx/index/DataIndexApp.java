@@ -1,4 +1,4 @@
-package com.luxx.index.app;
+package com.luxx.index;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
