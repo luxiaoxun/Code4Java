@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.luxx.index.client.ElasticSearchClient;
 import com.luxx.index.model.EndpointData;
+import com.luxx.index.util.JsonUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.bulk.BulkItemResponse;
@@ -84,23 +85,21 @@ public class RedshiftIndexService {
     }
 
     public String getIndexDataFromHotspotDataForRedshift(EndpointData data) {
-        String jsonString = null;
+        Map<String, Object> map = new HashMap<>();
         if (data != null) {
-            try {
-                XContentBuilder jsonBuilder = XContentFactory.jsonBuilder();
-                jsonBuilder.startObject().field("org_id", data.getOrg_id()).field("endpoint_id", data.getEndpoint_id())
-                        .field("ds_bytes", data.getDs_bytes()).field("ds_max_bps", data.getDs_max_bytes())
-                        .field("ds_avg_bps", data.getDs_avg_bytes()).field("ds_mwt", data.getDs_mwt())
-                        .field("us_bytes", data.getUs_bytes()).field("us_max_bps", data.getUs_max_bytes())
-                        .field("us_avg_bps", data.getUs_avg_bytes()).field("us_mwt", data.getUs_mwt())
-                        .field(TimeField, data.getDate_time()).endObject();
-                jsonString = jsonBuilder.string();
-            } catch (IOException e) {
-                log.error(e);
-            }
+            map.put("org_id", data.getOrg_id());
+            map.put("endpoint_id", data.getEndpoint_id());
+            map.put("ds_bytes", data.getDs_bytes());
+            map.put("ds_max_bps", data.getDs_max_bytes());
+            map.put("ds_avg_bps", data.getDs_avg_bytes());
+            map.put("ds_mwt", data.getDs_mwt());
+            map.put("us_bytes", data.getUs_bytes());
+            map.put("us_max_bps", data.getUs_max_bytes());
+            map.put("us_avg_bps", data.getUs_avg_bytes());
+            map.put("us_mwt", data.getUs_mwt());
+            map.put(TimeField, data.getDate_time());
         }
-
-        return jsonString;
+        return JsonUtil.objectToJson(map);
     }
 
     // Index data in bulk

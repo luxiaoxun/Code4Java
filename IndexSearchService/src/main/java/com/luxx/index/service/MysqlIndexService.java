@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luxx.index.client.ElasticSearchClient;
 import com.luxx.index.model.HotspotData;
 
+import com.luxx.index.util.JsonUtil;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -96,31 +97,20 @@ public class MysqlIndexService {
         return mapBuilder;
     }
 
-    //https://stackoverflow.com/questions/27427613/elasticsearch-java-api-putmapping-from-json-file-error
-    public static XContentBuilder builderFromJson(String json) throws JsonParseException, JsonMappingException, IOException {
-        Map<String, Object> map = new ObjectMapper().readValue(json, new TypeReference<Map<String, Object>>() {
-        });
-        return XContentFactory.jsonBuilder().map(map);
-    }
-
     // Build json data
     public String getIndexDataFromHotspotData(HotspotData data) {
-        String jsonString = null;
+        Map<String, Object> map = new HashMap<>();
         if (data != null) {
-            try {
-                XContentBuilder jsonBuilder = XContentFactory.jsonBuilder();
-                jsonBuilder.startObject().field(IDFieldName, data.getId()).field(SeqNumFieldName, data.getSeqNum())
-                        .field(IMSIFieldName, data.getImsi()).field(IMEIFieldName, data.getImei())
-                        .field(DeviceIDFieldName, data.getDeviceID()).field(OwnAreaFieldName, data.getOwnArea())
-                        .field(TeleOperFieldName, data.getTeleOper()).field(TimeFieldName, data.getCollectTime())
-                        .endObject();
-                jsonString = jsonBuilder.string();
-            } catch (IOException e) {
-                log.error(e);
-            }
+            map.put(IDFieldName, data.getId());
+            map.put(SeqNumFieldName, data.getSeqNum());
+            map.put(IMSIFieldName, data.getImsi());
+            map.put(IMEIFieldName, data.getImei());
+            map.put(DeviceIDFieldName, data.getDeviceID());
+            map.put(OwnAreaFieldName, data.getOwnArea());
+            map.put(TeleOperFieldName, data.getTeleOper());
+            map.put(TimeFieldName, data.getCollectTime());
         }
-
-        return jsonString;
+        return JsonUtil.objectToJson(map);
     }
 
     // Index data in bulk

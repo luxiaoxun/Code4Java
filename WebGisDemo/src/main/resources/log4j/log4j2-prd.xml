@@ -6,25 +6,31 @@
     </properties>
     <Appenders>
         <RollingRandomAccessFile fileName="${LOG_HOME}/${FILE_NAME}.log"
-            filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log.zip" name="append-file-log">
-            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread]%logger{36}:%L - %msg%n" />
+                                 filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log"
+                                 name="append-file-log">
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread]%logger{36}:%L - %msg%n"/>
             <Policies>
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="20 MB" />
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="20MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="20" />
+            <DefaultRolloverStrategy max="20">
+                <Delete basePath="${LOG_HOME}" maxDepth="2">
+                    <IfFileName glob="*/${FILE_NAME}-*.log"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingRandomAccessFile>
     </Appenders>
 
     <Loggers>
         <Logger additivity="false" level="info" name="com.luxx">
-            <AppenderRef ref="append-file-log" />
+            <AppenderRef ref="append-file-log"/>
         </Logger>
         <logger additivity="false" level="error" name="org.springframework">
-            <AppenderRef ref="append-file-log" />
+            <AppenderRef ref="append-file-log"/>
         </logger>
         <logger additivity="false" level="error" name="org.mybatis">
-            <AppenderRef ref="append-file-log" />
+            <AppenderRef ref="append-file-log"/>
         </logger>
     </Loggers>
 </Configuration>

@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="info" name="index-app" packages="">
+<Configuration monitorInterval="10" status="off">
     <properties>
         <property name="LOG_HOME">${sys:user.dir}/logs/</property>
         <property name="FILE_NAME">data-transfer</property>
     </properties>
     <Appenders>
-        <RollingFile name="RollingFile" fileName="${LOG_HOME}/${FILE_NAME}.log"
-                     filePattern="${LOG_HOME}/${FILE_NAME}-%d{yyyy-MM-dd}.log"
-                     ignoreExceptions="true">
-            <PatternLayout>
-                <Pattern>%d %p %c [%t] %m%n</Pattern>
-            </PatternLayout>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36}:%L - %msg%n"/>
+        </Console>
+        <RollingRandomAccessFile
+                name="append-file-log"
+                fileName="${LOG_HOME}/${FILE_NAME}.log"
+                filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} %level [%thread]%logger{36}:%L - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="20MB"/>
             </Policies>
-        </RollingFile>
-        <Console name="STDOUT" target="SYSTEM_OUT" ignoreExceptions="true">
-            <PatternLayout pattern="%d %p %c [%t] %m%n"/>
-        </Console>
+            <DefaultRolloverStrategy max="30">
+                <Delete basePath="${LOG_HOME}" maxDepth="2">
+                    <IfFileName glob="*/${FILE_NAME}-*.log"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
     </Appenders>
+
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="STDOUT"/>
-            <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="append-file-log"/>
         </Root>
     </Loggers>
 </Configuration>
