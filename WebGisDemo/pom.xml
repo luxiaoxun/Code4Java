@@ -19,7 +19,9 @@
         <spring-boot.version>2.2.7.RELEASE</spring-boot.version>
         <mybatis.spring.boot.version>2.1.4</mybatis.spring.boot.version>
         <pagehelper.spring.boot.version>1.2.13</pagehelper.spring.boot.version>
-        <jackson.version>2.12.1</jackson.version>
+        <es.version>7.14.0</es.version>
+        <log4j2.version>2.17.1</log4j2.version>
+        <jackson.version>2.12.4</jackson.version>
         <swagger.version>3.0.0</swagger.version>
         <lombok.version>1.18.16</lombok.version>
         <guava.version>30.0-jre</guava.version>
@@ -27,11 +29,20 @@
         <mysql.version>8.0.28</mysql.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>redshift</id>
+            <url>http://redshift-maven-repository.s3-website-us-east-1.amazonaws.com/release</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
-            <groupId>com.luxx</groupId>
-            <artifactId>IndexSearchService</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.wltea.analyzer</groupId>
+            <artifactId>lucene-analyzers-ik</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/lucene-analyzers-ik-1.0.jar</systemPath>
         </dependency>
 
         <!-- spring boot -->
@@ -56,6 +67,17 @@
             <artifactId>spring-boot-starter-log4j2</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
+        <!-- log4j2 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
         <!-- spring boot freemarker -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -64,11 +86,6 @@
         </dependency>
 
         <!-- spring boot mybatis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -92,6 +109,29 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.version}</version>
+        </dependency>
+
+        <!-- jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${es.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+            <version>${es.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>${es.version}</version>
         </dependency>
 
         <!-- guava -->
@@ -132,6 +172,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>

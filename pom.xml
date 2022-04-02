@@ -9,7 +9,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>IndexSearchService</module>
         <module>MapHttpService</module>
         <module>NettyMqService</module>
         <module>WebGisDemo</module>
