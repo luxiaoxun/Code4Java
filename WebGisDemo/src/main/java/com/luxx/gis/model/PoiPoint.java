@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class PoiPoint {
     private double lat;
-    private double lng;
+    private double lon;
 
     public PoiPoint() {
     }
 
-    public PoiPoint(double lat, double lng) {
+    public PoiPoint(double lat, double lon) {
         this.lat = lat;
-        this.lng = lng;
+        this.lon = lon;
     }
 }

@@ -60,12 +60,12 @@ public class StationController {
         if (points != null && points.size() >= 4) {
             double minLat = points.get(0).getLat();
             double maxLat = points.get(1).getLat();
-            double minLng = points.get(0).getLng();
-            double maxLng = points.get(1).getLng();
+            double minLng = points.get(0).getLon();
+            double maxLng = points.get(1).getLon();
 
             for (PoiPoint poiPoint : points) {
                 double lat = poiPoint.getLat();
-                double lng = poiPoint.getLng();
+                double lng = poiPoint.getLon();
                 maxLat = Math.max(maxLat, lat);
                 minLat = Math.min(minLat, lat);
                 maxLng = Math.max(maxLng, lng);
