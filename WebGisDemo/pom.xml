@@ -37,14 +37,6 @@
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.wltea.analyzer</groupId>
-            <artifactId>lucene-analyzers-ik</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/lucene-analyzers-ik-1.0.jar</systemPath>
-        </dependency>
-
         <!-- spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -118,6 +110,7 @@
             <version>${jackson.version}</version>
         </dependency>
 
+        <!-- elasticsearch -->
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>

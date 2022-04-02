@@ -1,4 +1,4 @@
-FROM soft.luxx.cn/library/openjdk-18-el7:latest
+FROM openjdk-18-el7:latest
 WORKDIR /service
 COPY target/log-collector-1.0.jar /service/log-collector.jar
 COPY entrypoint.sh /service/entrypoint.sh
