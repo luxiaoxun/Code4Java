@@ -14,14 +14,14 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-                id,
-                country_code,
-                provider,
-                lac,
-                cell,
-                latitude,
-                longitude,
-                address
+        id,
+        country_code,
+        provider,
+        lac,
+        cell,
+        latitude,
+        longitude,
+        address
     </sql>
 
     <select id="getStation" resultMap="stationResultMap">

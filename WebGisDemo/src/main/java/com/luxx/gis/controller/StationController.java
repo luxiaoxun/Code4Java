@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,8 @@ public class StationController {
     private IndexSearchService indexSearchService;
 
     @GetMapping("/loadData")
-    public ResultData loadData(@RequestParam("pageNum") int pageNum, @RequestParam("pageSize") int pageSize) {
+    public ResultData loadData(@RequestParam(defaultValue = "1") @Min(1) int pageNum,
+                               @RequestParam(defaultValue = "10") int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<Station> stationList = stationService.getStation();
         PageInfo<Station> pageInfo = new PageInfo<>(stationList);
