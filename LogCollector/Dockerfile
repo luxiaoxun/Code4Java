@@ -1,4 +1,4 @@
-FROM openjdk-18-el7:latest
+FROM adoptopenjdk/openjdk8:alpine
 WORKDIR /service
 COPY target/log-collector-1.0.jar /service/log-collector.jar
 COPY entrypoint.sh /service/entrypoint.sh

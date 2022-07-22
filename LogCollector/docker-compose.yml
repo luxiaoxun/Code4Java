@@ -1,10 +1,12 @@
-version: '1'
+version: '3'
 services:
   log-collector:
+    container_name: log-collector
     image: log-collector
     build: ./
     environment:
       - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8899
+      - _JAVA_OPTIONS=-Xms1024m -Xmx2048m
       - LOG_LEVEL=info
       - ENV=dev
       - ES_ADDRESS=10.10.10.10:9200
