@@ -28,7 +28,7 @@ How to use WebGisDemo with MapHttpService:
    >port=8899  
    >database.type=0 # Use SQLite  
    >database.sqlite.path=E:\\GIS\\MapDownloader\\MapCache\\TileDBv5\\en\\Data.gmdb
-3. Start WebGISDemo: http://localhost:9090/map/map
+3. Start WebGISDemo: http://localhost:9090/map
 
 ![map](https://github.com/luxiaoxun/Code4Java/blob/master/WebGisDemo/picture/map-demo.png)
 
