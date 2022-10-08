@@ -16,7 +16,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.luxx.web"))
+                .apis(RequestHandlerSelectors.basePackage("com.luxx.gis"))
                 .paths(PathSelectors.any())
                 .build();
     }
