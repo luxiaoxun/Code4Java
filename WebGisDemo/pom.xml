@@ -24,7 +24,7 @@
         <jackson.version>2.14.0</jackson.version>
         <swagger.version>3.0.0</swagger.version>
         <lombok.version>1.18.16</lombok.version>
-        <guava.version>30.0-jre</guava.version>
+        <guava.version>32.0.0-jre</guava.version>
         <hikaricp.version>3.4.5</hikaricp.version>
         <mysql.version>8.0.28</mysql.version>
     </properties>
