@@ -19,7 +19,7 @@
         <spring-boot.version>2.5.12</spring-boot.version>
         <mybatis.spring-boot.version>2.2.2</mybatis.spring-boot.version>
         <pagehelper.spring-boot.version>1.4.2</pagehelper.spring-boot.version>
-        <es.version>7.17.14</es.version>
+        <es.version>7.17.19</es.version>
         <log4j2.version>2.18.0</log4j2.version>
         <jackson.version>2.14.0</jackson.version>
         <swagger.version>3.0.0</swagger.version>
